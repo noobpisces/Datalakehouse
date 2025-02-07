@@ -1,0 +1,68 @@
+[2024-10-10T15:49:21.586+0000] {taskinstance.py:1157} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: spark_processing_dag.silver_cleaned_keywords scheduled__2024-10-09T00:00:00+00:00 [queued]>
+[2024-10-10T15:49:21.595+0000] {taskinstance.py:1157} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: spark_processing_dag.silver_cleaned_keywords scheduled__2024-10-09T00:00:00+00:00 [queued]>
+[2024-10-10T15:49:21.596+0000] {taskinstance.py:1359} INFO - Starting attempt 1 of 2
+[2024-10-10T15:49:21.606+0000] {taskinstance.py:1380} INFO - Executing <Task(SparkSubmitOperator): silver_cleaned_keywords> on 2024-10-09 00:00:00+00:00
+[2024-10-10T15:49:21.611+0000] {standard_task_runner.py:57} INFO - Started process 669 to run task
+[2024-10-10T15:49:21.614+0000] {standard_task_runner.py:84} INFO - Running: ['***', 'tasks', 'run', 'spark_processing_dag', 'silver_cleaned_keywords', 'scheduled__2024-10-09T00:00:00+00:00', '--job-id', '15', '--raw', '--subdir', 'DAGS_FOLDER/sliver_layer.py', '--cfg-path', '/tmp/tmpwprwpyz3']
+[2024-10-10T15:49:21.617+0000] {standard_task_runner.py:85} INFO - Job 15: Subtask silver_cleaned_keywords
+[2024-10-10T15:49:21.665+0000] {task_command.py:415} INFO - Running <TaskInstance: spark_processing_dag.silver_cleaned_keywords scheduled__2024-10-09T00:00:00+00:00 [running]> on host 84076e7a47fe
+[2024-10-10T15:49:21.732+0000] {taskinstance.py:1660} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='spark_processing_dag' AIRFLOW_CTX_TASK_ID='silver_cleaned_keywords' AIRFLOW_CTX_EXECUTION_DATE='2024-10-09T00:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2024-10-09T00:00:00+00:00'
+[2024-10-10T15:49:21.741+0000] {spark_submit.py:273} INFO - Could not load connection string spark-conn, defaulting to yarn
+[2024-10-10T15:49:21.743+0000] {spark_submit.py:403} INFO - Spark-Submit cmd: spark-submit --master yarn --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog --jars /opt/***/jars/hadoop-aws-3.3.4.jar,/opt/***/jars/s3-2.18.41.jar,/opt/***/jars/aws-java-sdk-1.12.367.jar,/opt/***/jars/delta-core_2.12-2.4.0.jar,/opt/***/jars/delta-storage-2.2.0.jar, --packages org.apache.hadoop:hadoop-aws:3.3.4 --num-executors 2 --total-executor-cores 2 --executor-cores 2 --executor-memory 2g --driver-memory 1g --name arrow-spark /opt/***/jobs/python/test_Key.py s3a://lakehouse/bronze/keywords.parquet s3a://lakehouse/silver
+[2024-10-10T15:49:21.932+0000] {spark_submit.py:579} INFO - /home/***/.local/lib/python3.11/site-packages/pyspark/bin/load-spark-env.sh: line 68: ps: command not found
+[2024-10-10T15:49:24.548+0000] {spark_submit.py:579} INFO - Exception in thread "main" org.apache.spark.SparkException: When running with master 'yarn' either HADOOP_CONF_DIR or YARN_CONF_DIR must be set in the environment.
+[2024-10-10T15:49:24.548+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmitArguments.error(SparkSubmitArguments.scala:650)
+[2024-10-10T15:49:24.549+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmitArguments.validateSubmitArguments(SparkSubmitArguments.scala:281)
+[2024-10-10T15:49:24.549+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmitArguments.validateArguments(SparkSubmitArguments.scala:237)
+[2024-10-10T15:49:24.550+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmitArguments.<init>(SparkSubmitArguments.scala:122)
+[2024-10-10T15:49:24.550+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit$$anon$2$$anon$3.<init>(SparkSubmit.scala:1094)
+[2024-10-10T15:49:24.551+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit$$anon$2.parseArguments(SparkSubmit.scala:1094)
+[2024-10-10T15:49:24.551+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit.doSubmit(SparkSubmit.scala:86)
+[2024-10-10T15:49:24.551+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit$$anon$2.doSubmit(SparkSubmit.scala:1111)
+[2024-10-10T15:49:24.551+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit$.main(SparkSubmit.scala:1120)
+[2024-10-10T15:49:24.552+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit.main(SparkSubmit.scala)
+[2024-10-10T15:49:24.569+0000] {taskinstance.py:1935} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/providers/apache/spark/operators/spark_submit.py", line 174, in execute
+    self._hook.submit(self.application)
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/providers/apache/spark/hooks/spark_submit.py", line 505, in submit
+    raise AirflowException(
+airflow.exceptions.AirflowException: Cannot execute: spark-submit --master yarn --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog --jars /opt/***/jars/hadoop-aws-3.3.4.jar,/opt/***/jars/s3-2.18.41.jar,/opt/***/jars/aws-java-sdk-1.12.367.jar,/opt/***/jars/delta-core_2.12-2.4.0.jar,/opt/***/jars/delta-storage-2.2.0.jar, --packages org.apache.hadoop:hadoop-aws:3.3.4 --num-executors 2 --total-executor-cores 2 --executor-cores 2 --executor-memory 2g --driver-memory 1g --name arrow-spark /opt/***/jobs/python/test_Key.py s3a://lakehouse/bronze/keywords.parquet s3a://lakehouse/silver. Error code is: 1.
+[2024-10-10T15:49:24.574+0000] {taskinstance.py:1398} INFO - Marking task as UP_FOR_RETRY. dag_id=spark_processing_dag, task_id=silver_cleaned_keywords, execution_date=20241009T000000, start_date=20241010T154921, end_date=20241010T154924
+[2024-10-10T15:49:24.585+0000] {standard_task_runner.py:104} ERROR - Failed to execute job 15 for task silver_cleaned_keywords (Cannot execute: spark-submit --master yarn --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog --jars /opt/***/jars/hadoop-aws-3.3.4.jar,/opt/***/jars/s3-2.18.41.jar,/opt/***/jars/aws-java-sdk-1.12.367.jar,/opt/***/jars/delta-core_2.12-2.4.0.jar,/opt/***/jars/delta-storage-2.2.0.jar, --packages org.apache.hadoop:hadoop-aws:3.3.4 --num-executors 2 --total-executor-cores 2 --executor-cores 2 --executor-memory 2g --driver-memory 1g --name arrow-spark /opt/***/jobs/python/test_Key.py s3a://lakehouse/bronze/keywords.parquet s3a://lakehouse/silver. Error code is: 1.; 669)
+[2024-10-10T15:49:24.596+0000] {local_task_job_runner.py:228} INFO - Task exited with return code 1
+[2024-10-10T15:49:24.611+0000] {taskinstance.py:2776} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2024-10-10T17:07:25.524+0000] {taskinstance.py:1157} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: spark_processing_dag.silver_cleaned_keywords scheduled__2024-10-09T00:00:00+00:00 [queued]>
+[2024-10-10T17:07:25.532+0000] {taskinstance.py:1157} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: spark_processing_dag.silver_cleaned_keywords scheduled__2024-10-09T00:00:00+00:00 [queued]>
+[2024-10-10T17:07:25.532+0000] {taskinstance.py:1359} INFO - Starting attempt 1 of 2
+[2024-10-10T17:07:25.544+0000] {taskinstance.py:1380} INFO - Executing <Task(SparkSubmitOperator): silver_cleaned_keywords> on 2024-10-09 00:00:00+00:00
+[2024-10-10T17:07:25.549+0000] {standard_task_runner.py:57} INFO - Started process 3365 to run task
+[2024-10-10T17:07:25.553+0000] {standard_task_runner.py:84} INFO - Running: ['***', 'tasks', 'run', 'spark_processing_dag', 'silver_cleaned_keywords', 'scheduled__2024-10-09T00:00:00+00:00', '--job-id', '19', '--raw', '--subdir', 'DAGS_FOLDER/sliver_layer.py', '--cfg-path', '/tmp/tmp40awfv5s']
+[2024-10-10T17:07:25.556+0000] {standard_task_runner.py:85} INFO - Job 19: Subtask silver_cleaned_keywords
+[2024-10-10T17:07:25.604+0000] {task_command.py:415} INFO - Running <TaskInstance: spark_processing_dag.silver_cleaned_keywords scheduled__2024-10-09T00:00:00+00:00 [running]> on host 84076e7a47fe
+[2024-10-10T17:07:25.675+0000] {taskinstance.py:1660} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='spark_processing_dag' AIRFLOW_CTX_TASK_ID='silver_cleaned_keywords' AIRFLOW_CTX_EXECUTION_DATE='2024-10-09T00:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2024-10-09T00:00:00+00:00'
+[2024-10-10T17:07:25.684+0000] {spark_submit.py:273} INFO - Could not load connection string spark-conn, defaulting to yarn
+[2024-10-10T17:07:25.686+0000] {spark_submit.py:403} INFO - Spark-Submit cmd: spark-submit --master yarn --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog --jars /opt/***/jars/hadoop-aws-3.3.4.jar,/opt/***/jars/s3-2.18.41.jar,/opt/***/jars/aws-java-sdk-1.12.367.jar,/opt/***/jars/delta-core_2.12-2.4.0.jar,/opt/***/jars/delta-storage-2.2.0.jar, --packages org.apache.hadoop:hadoop-aws:3.3.4 --num-executors 2 --total-executor-cores 2 --executor-cores 2 --executor-memory 2g --driver-memory 1g --name arrow-spark /opt/***/jobs/python/test_Key.py s3a://lakehouse/bronze/keywords.parquet s3a://lakehouse/silver
+[2024-10-10T17:07:25.835+0000] {spark_submit.py:579} INFO - /home/***/.local/lib/python3.11/site-packages/pyspark/bin/load-spark-env.sh: line 68: ps: command not found
+[2024-10-10T17:07:28.567+0000] {spark_submit.py:579} INFO - Exception in thread "main" org.apache.spark.SparkException: When running with master 'yarn' either HADOOP_CONF_DIR or YARN_CONF_DIR must be set in the environment.
+[2024-10-10T17:07:28.568+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmitArguments.error(SparkSubmitArguments.scala:650)
+[2024-10-10T17:07:28.569+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmitArguments.validateSubmitArguments(SparkSubmitArguments.scala:281)
+[2024-10-10T17:07:28.569+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmitArguments.validateArguments(SparkSubmitArguments.scala:237)
+[2024-10-10T17:07:28.570+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmitArguments.<init>(SparkSubmitArguments.scala:122)
+[2024-10-10T17:07:28.570+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit$$anon$2$$anon$3.<init>(SparkSubmit.scala:1094)
+[2024-10-10T17:07:28.571+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit$$anon$2.parseArguments(SparkSubmit.scala:1094)
+[2024-10-10T17:07:28.571+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit.doSubmit(SparkSubmit.scala:86)
+[2024-10-10T17:07:28.572+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit$$anon$2.doSubmit(SparkSubmit.scala:1111)
+[2024-10-10T17:07:28.572+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit$.main(SparkSubmit.scala:1120)
+[2024-10-10T17:07:28.572+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit.main(SparkSubmit.scala)
+[2024-10-10T17:07:28.590+0000] {taskinstance.py:1935} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/providers/apache/spark/operators/spark_submit.py", line 174, in execute
+    self._hook.submit(self.application)
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/providers/apache/spark/hooks/spark_submit.py", line 505, in submit
+    raise AirflowException(
+airflow.exceptions.AirflowException: Cannot execute: spark-submit --master yarn --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog --jars /opt/***/jars/hadoop-aws-3.3.4.jar,/opt/***/jars/s3-2.18.41.jar,/opt/***/jars/aws-java-sdk-1.12.367.jar,/opt/***/jars/delta-core_2.12-2.4.0.jar,/opt/***/jars/delta-storage-2.2.0.jar, --packages org.apache.hadoop:hadoop-aws:3.3.4 --num-executors 2 --total-executor-cores 2 --executor-cores 2 --executor-memory 2g --driver-memory 1g --name arrow-spark /opt/***/jobs/python/test_Key.py s3a://lakehouse/bronze/keywords.parquet s3a://lakehouse/silver. Error code is: 1.
+[2024-10-10T17:07:28.595+0000] {taskinstance.py:1398} INFO - Marking task as UP_FOR_RETRY. dag_id=spark_processing_dag, task_id=silver_cleaned_keywords, execution_date=20241009T000000, start_date=20241010T170725, end_date=20241010T170728
+[2024-10-10T17:07:28.606+0000] {standard_task_runner.py:104} ERROR - Failed to execute job 19 for task silver_cleaned_keywords (Cannot execute: spark-submit --master yarn --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog --jars /opt/***/jars/hadoop-aws-3.3.4.jar,/opt/***/jars/s3-2.18.41.jar,/opt/***/jars/aws-java-sdk-1.12.367.jar,/opt/***/jars/delta-core_2.12-2.4.0.jar,/opt/***/jars/delta-storage-2.2.0.jar, --packages org.apache.hadoop:hadoop-aws:3.3.4 --num-executors 2 --total-executor-cores 2 --executor-cores 2 --executor-memory 2g --driver-memory 1g --name arrow-spark /opt/***/jobs/python/test_Key.py s3a://lakehouse/bronze/keywords.parquet s3a://lakehouse/silver. Error code is: 1.; 3365)
+[2024-10-10T17:07:28.615+0000] {local_task_job_runner.py:228} INFO - Task exited with return code 1
+[2024-10-10T17:07:28.631+0000] {taskinstance.py:2776} INFO - 0 downstream tasks scheduled from follow-on schedule check

@@ -1,0 +1,87 @@
+[2024-11-02T11:38:39.030+0000] {taskinstance.py:1157} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: task_credits_clean.credits_cleaned manual__2024-11-02T11:38:37.410228+00:00 [queued]>
+[2024-11-02T11:38:39.043+0000] {taskinstance.py:1157} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: task_credits_clean.credits_cleaned manual__2024-11-02T11:38:37.410228+00:00 [queued]>
+[2024-11-02T11:38:39.044+0000] {taskinstance.py:1359} INFO - Starting attempt 1 of 2
+[2024-11-02T11:38:39.061+0000] {taskinstance.py:1380} INFO - Executing <Task(SparkSubmitOperator): credits_cleaned> on 2024-11-02 11:38:37.410228+00:00
+[2024-11-02T11:38:39.068+0000] {standard_task_runner.py:57} INFO - Started process 259 to run task
+[2024-11-02T11:38:39.081+0000] {standard_task_runner.py:84} INFO - Running: ['***', 'tasks', 'run', 'task_credits_clean', 'credits_cleaned', 'manual__2024-11-02T11:38:37.410228+00:00', '--job-id', '106', '--raw', '--subdir', 'DAGS_FOLDER/credits_test.py', '--cfg-path', '/tmp/tmpoxh7kcsz']
+[2024-11-02T11:38:39.085+0000] {standard_task_runner.py:85} INFO - Job 106: Subtask credits_cleaned
+[2024-11-02T11:38:39.157+0000] {task_command.py:415} INFO - Running <TaskInstance: task_credits_clean.credits_cleaned manual__2024-11-02T11:38:37.410228+00:00 [running]> on host ca8eb5e6736b
+[2024-11-02T11:38:39.650+0000] {taskinstance.py:1660} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='task_credits_clean' AIRFLOW_CTX_TASK_ID='credits_cleaned' AIRFLOW_CTX_EXECUTION_DATE='2024-11-02T11:38:37.410228+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2024-11-02T11:38:37.410228+00:00'
+[2024-11-02T11:38:39.669+0000] {base.py:73} INFO - Using connection ID 'spark-conn' for task execution.
+[2024-11-02T11:38:39.675+0000] {spark_submit.py:403} INFO - Spark-Submit cmd: spark-submit --master spark://master:7077 --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog --jars /opt/***/jars/hadoop-aws-3.3.4.jar,/opt/***/jars/s3-2.18.41.jar,/opt/***/jars/aws-java-sdk-1.12.367.jar,/opt/***/jars/delta-core_2.12-2.4.0.jar,/opt/***/jars/delta-storage-2.2.0.jar, --packages org.apache.hadoop:hadoop-aws:3.3.4 --num-executors 2 --total-executor-cores 2 --executor-cores 2 --executor-memory 2g --driver-memory 1g --name arrow-spark --deploy-mode client /opt/***/jobs/python/test_Credit.py s3a://lakehouse/bronze/credits.parquet s3a://lakehouse/sliver/credit
+[2024-11-02T11:38:40.052+0000] {spark_submit.py:579} INFO - /home/***/.local/lib/python3.11/site-packages/pyspark/bin/load-spark-env.sh: line 68: ps: command not found
+[2024-11-02T11:38:48.169+0000] {spark_submit.py:579} INFO - :: loading settings :: url = jar:file:/home/***/.local/lib/python3.11/site-packages/pyspark/jars/ivy-2.5.1.jar!/org/apache/ivy/core/settings/ivysettings.xml
+[2024-11-02T11:38:48.384+0000] {spark_submit.py:579} INFO - Ivy Default Cache set to: /home/***/.ivy2/cache
+[2024-11-02T11:38:48.385+0000] {spark_submit.py:579} INFO - The jars for the packages stored in: /home/***/.ivy2/jars
+[2024-11-02T11:38:48.391+0000] {spark_submit.py:579} INFO - org.apache.hadoop#hadoop-aws added as a dependency
+[2024-11-02T11:38:48.393+0000] {spark_submit.py:579} INFO - :: resolving dependencies :: org.apache.spark#spark-submit-parent-051c6d74-2833-4d25-bf87-cbd999e30715;1.0
+[2024-11-02T11:38:48.393+0000] {spark_submit.py:579} INFO - confs: [default]
+[2024-11-02T11:38:52.084+0000] {spark_submit.py:579} INFO - :: resolution report :: resolve 3691ms :: artifacts dl 0ms
+[2024-11-02T11:38:52.085+0000] {spark_submit.py:579} INFO - :: modules in use:
+[2024-11-02T11:38:52.085+0000] {spark_submit.py:579} INFO - ---------------------------------------------------------------------
+[2024-11-02T11:38:52.086+0000] {spark_submit.py:579} INFO - |                  |            modules            ||   artifacts   |
+[2024-11-02T11:38:52.086+0000] {spark_submit.py:579} INFO - |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+[2024-11-02T11:38:52.087+0000] {spark_submit.py:579} INFO - ---------------------------------------------------------------------
+[2024-11-02T11:38:52.087+0000] {spark_submit.py:579} INFO - |      default     |   1   |   0   |   0   |   0   ||   0   |   0   |
+[2024-11-02T11:38:52.088+0000] {spark_submit.py:579} INFO - ---------------------------------------------------------------------
+[2024-11-02T11:38:52.088+0000] {spark_submit.py:579} INFO - 
+[2024-11-02T11:38:52.089+0000] {spark_submit.py:579} INFO - :: problems summary ::
+[2024-11-02T11:38:52.089+0000] {spark_submit.py:579} INFO - :::: WARNINGS
+[2024-11-02T11:38:52.090+0000] {spark_submit.py:579} INFO - problem while downloading module descriptor: https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.pom: Downloaded file size (0) doesn't match expected Content Length (25377) for https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.pom. Please retry. (255ms)
+[2024-11-02T11:38:52.090+0000] {spark_submit.py:579} INFO - 
+[2024-11-02T11:38:52.091+0000] {spark_submit.py:579} INFO - module not found: org.apache.hadoop#hadoop-aws;3.3.4
+[2024-11-02T11:38:52.091+0000] {spark_submit.py:579} INFO - 
+[2024-11-02T11:38:52.092+0000] {spark_submit.py:579} INFO - ==== local-m2-cache: tried
+[2024-11-02T11:38:52.092+0000] {spark_submit.py:579} INFO - 
+[2024-11-02T11:38:52.092+0000] {spark_submit.py:579} INFO - file:/home/***/.m2/repository/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.pom
+[2024-11-02T11:38:52.093+0000] {spark_submit.py:579} INFO - 
+[2024-11-02T11:38:52.093+0000] {spark_submit.py:579} INFO - -- artifact org.apache.hadoop#hadoop-aws;3.3.4!hadoop-aws.jar:
+[2024-11-02T11:38:52.093+0000] {spark_submit.py:579} INFO - 
+[2024-11-02T11:38:52.094+0000] {spark_submit.py:579} INFO - file:/home/***/.m2/repository/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar
+[2024-11-02T11:38:52.094+0000] {spark_submit.py:579} INFO - 
+[2024-11-02T11:38:52.094+0000] {spark_submit.py:579} INFO - ==== local-ivy-cache: tried
+[2024-11-02T11:38:52.095+0000] {spark_submit.py:579} INFO - 
+[2024-11-02T11:38:52.095+0000] {spark_submit.py:579} INFO - /home/***/.ivy2/local/org.apache.hadoop/hadoop-aws/3.3.4/ivys/ivy.xml
+[2024-11-02T11:38:52.095+0000] {spark_submit.py:579} INFO - 
+[2024-11-02T11:38:52.095+0000] {spark_submit.py:579} INFO - -- artifact org.apache.hadoop#hadoop-aws;3.3.4!hadoop-aws.jar:
+[2024-11-02T11:38:52.096+0000] {spark_submit.py:579} INFO - 
+[2024-11-02T11:38:52.096+0000] {spark_submit.py:579} INFO - /home/***/.ivy2/local/org.apache.hadoop/hadoop-aws/3.3.4/jars/hadoop-aws.jar
+[2024-11-02T11:38:52.096+0000] {spark_submit.py:579} INFO - 
+[2024-11-02T11:38:52.096+0000] {spark_submit.py:579} INFO - ==== central: tried
+[2024-11-02T11:38:52.097+0000] {spark_submit.py:579} INFO - 
+[2024-11-02T11:38:52.097+0000] {spark_submit.py:579} INFO - https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.pom
+[2024-11-02T11:38:52.097+0000] {spark_submit.py:579} INFO - 
+[2024-11-02T11:38:52.098+0000] {spark_submit.py:579} INFO - ==== spark-packages: tried
+[2024-11-02T11:38:52.098+0000] {spark_submit.py:579} INFO - 
+[2024-11-02T11:38:52.098+0000] {spark_submit.py:579} INFO - https://repos.spark-packages.org/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.pom
+[2024-11-02T11:38:52.098+0000] {spark_submit.py:579} INFO - 
+[2024-11-02T11:38:52.099+0000] {spark_submit.py:579} INFO - -- artifact org.apache.hadoop#hadoop-aws;3.3.4!hadoop-aws.jar:
+[2024-11-02T11:38:52.099+0000] {spark_submit.py:579} INFO - 
+[2024-11-02T11:38:52.099+0000] {spark_submit.py:579} INFO - https://repos.spark-packages.org/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar
+[2024-11-02T11:38:52.099+0000] {spark_submit.py:579} INFO - 
+[2024-11-02T11:38:52.100+0000] {spark_submit.py:579} INFO - ::::::::::::::::::::::::::::::::::::::::::::::
+[2024-11-02T11:38:52.100+0000] {spark_submit.py:579} INFO - 
+[2024-11-02T11:38:52.100+0000] {spark_submit.py:579} INFO - ::          UNRESOLVED DEPENDENCIES         ::
+[2024-11-02T11:38:52.100+0000] {spark_submit.py:579} INFO - 
+[2024-11-02T11:38:52.101+0000] {spark_submit.py:579} INFO - ::::::::::::::::::::::::::::::::::::::::::::::
+[2024-11-02T11:38:52.101+0000] {spark_submit.py:579} INFO - 
+[2024-11-02T11:38:52.101+0000] {spark_submit.py:579} INFO - :: org.apache.hadoop#hadoop-aws;3.3.4: not found
+[2024-11-02T11:38:52.101+0000] {spark_submit.py:579} INFO - 
+[2024-11-02T11:38:52.102+0000] {spark_submit.py:579} INFO - ::::::::::::::::::::::::::::::::::::::::::::::
+[2024-11-02T11:38:52.102+0000] {spark_submit.py:579} INFO - 
+[2024-11-02T11:38:52.102+0000] {spark_submit.py:579} INFO - 
+[2024-11-02T11:38:52.102+0000] {spark_submit.py:579} INFO - 
+[2024-11-02T11:38:52.103+0000] {spark_submit.py:579} INFO - :: USE VERBOSE OR DEBUG MESSAGE LEVEL FOR MORE DETAILS
+[2024-11-02T11:38:52.103+0000] {spark_submit.py:579} INFO - Exception in thread "main" java.lang.RuntimeException: [unresolved dependency: org.apache.hadoop#hadoop-aws;3.3.4: not found]
+[2024-11-02T11:38:52.103+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmitUtils$.resolveMavenCoordinates(SparkSubmit.scala:1599)
+[2024-11-02T11:38:52.104+0000] {spark_submit.py:579} INFO - at org.apache.spark.util.DependencyUtils$.resolveMavenDependencies(DependencyUtils.scala:185)
+[2024-11-02T11:38:52.104+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit.prepareSubmitEnvironment(SparkSubmit.scala:332)
+[2024-11-02T11:38:52.104+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit.org$apache$spark$deploy$SparkSubmit$$runMain(SparkSubmit.scala:955)
+[2024-11-02T11:38:52.105+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit.doRunMain$1(SparkSubmit.scala:192)
+[2024-11-02T11:38:52.105+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit.submit(SparkSubmit.scala:215)
+[2024-11-02T11:38:52.105+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit.doSubmit(SparkSubmit.scala:91)
+[2024-11-02T11:38:52.105+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit$$anon$2.doSubmit(SparkSubmit.scala:1111)
+[2024-11-02T11:38:52.106+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit$.main(SparkSubmit.scala:1120)
+[2024-11-02T11:38:52.106+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit.main(SparkSubmit.scala)
+[2024-11-02T11:38:52.164+0000] {local_task_job_runner.py:228} INFO - Task exited with return code 0
+[2024-11-02T11:38:52.177+0000] {taskinstance.py:2776} INFO - 0 downstream tasks scheduled from follow-on schedule check

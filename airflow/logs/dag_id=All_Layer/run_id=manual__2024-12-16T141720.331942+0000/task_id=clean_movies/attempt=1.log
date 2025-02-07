@@ -1,0 +1,356 @@
+[2024-12-16T14:17:37.207+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: All_Layer.clean_movies manual__2024-12-16T14:17:20.331942+00:00 [queued]>
+[2024-12-16T14:17:37.268+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: All_Layer.clean_movies manual__2024-12-16T14:17:20.331942+00:00 [queued]>
+[2024-12-16T14:17:37.269+0000] {taskinstance.py:1361} INFO - Starting attempt 1 of 2
+[2024-12-16T14:17:37.293+0000] {taskinstance.py:1382} INFO - Executing <Task(SparkSubmitOperator): clean_movies> on 2024-12-16 14:17:20.331942+00:00
+[2024-12-16T14:17:37.304+0000] {standard_task_runner.py:57} INFO - Started process 660 to run task
+[2024-12-16T14:17:37.307+0000] {standard_task_runner.py:84} INFO - Running: ['***', 'tasks', 'run', 'All_Layer', 'clean_movies', 'manual__2024-12-16T14:17:20.331942+00:00', '--job-id', '212', '--raw', '--subdir', 'DAGS_FOLDER/All_Offi.py', '--cfg-path', '/tmp/tmphtu4lsh3']
+[2024-12-16T14:17:37.317+0000] {standard_task_runner.py:85} INFO - Job 212: Subtask clean_movies
+[2024-12-16T14:17:37.394+0000] {task_command.py:416} INFO - Running <TaskInstance: All_Layer.clean_movies manual__2024-12-16T14:17:20.331942+00:00 [running]> on host a2b73f6a4b3a
+[2024-12-16T14:17:37.544+0000] {taskinstance.py:1662} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='All_Layer' AIRFLOW_CTX_TASK_ID='clean_movies' AIRFLOW_CTX_EXECUTION_DATE='2024-12-16T14:17:20.331942+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2024-12-16T14:17:20.331942+00:00'
+[2024-12-16T14:17:37.561+0000] {base.py:73} INFO - Using connection ID 'spark-conn' for task execution.
+[2024-12-16T14:17:37.567+0000] {spark_submit.py:403} INFO - Spark-Submit cmd: spark-submit --master spark://spark-master:7077 --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog --conf delta.enable-non-concurrent-writes=true --jars /opt/***/jars/hadoop-aws-3.3.4.jar,/opt/***/jars/s3-2.18.41.jar,/opt/***/jars/aws-java-sdk-1.12.367.jar,/opt/***/jars/delta-core_2.12-2.2.0.jar,/opt/***/jars/delta-storage-2.2.0.jar, --packages org.apache.hadoop:hadoop-aws:3.3.4 --num-executors 2 --total-executor-cores 2 --executor-cores 2 --executor-memory 1g --driver-memory 1g --name arrow-spark --deploy-mode client /opt/***/jobs/python/processing_movie.py s3a://lakehouse/bronze/movies.parquet s3a://lakehouse/sliver/movies
+[2024-12-16T14:17:37.954+0000] {spark_submit.py:579} INFO - /home/***/.local/lib/python3.9/site-packages/pyspark/bin/load-spark-env.sh: line 68: ps: command not found
+[2024-12-16T14:17:42.860+0000] {spark_submit.py:579} INFO - Warning: Ignoring non-Spark config property: delta.enable-non-concurrent-writes
+[2024-12-16T14:17:43.504+0000] {spark_submit.py:579} INFO - :: loading settings :: url = jar:file:/home/***/.local/lib/python3.9/site-packages/pyspark/jars/ivy-2.5.1.jar!/org/apache/ivy/core/settings/ivysettings.xml
+[2024-12-16T14:17:43.886+0000] {spark_submit.py:579} INFO - Ivy Default Cache set to: /home/***/.ivy2/cache
+[2024-12-16T14:17:43.890+0000] {spark_submit.py:579} INFO - The jars for the packages stored in: /home/***/.ivy2/jars
+[2024-12-16T14:17:43.905+0000] {spark_submit.py:579} INFO - org.apache.hadoop#hadoop-aws added as a dependency
+[2024-12-16T14:17:43.920+0000] {spark_submit.py:579} INFO - :: resolving dependencies :: org.apache.spark#spark-submit-parent-092ab3f2-3f76-4d52-9f9f-250494103ec0;1.0
+[2024-12-16T14:17:43.924+0000] {spark_submit.py:579} INFO - confs: [default]
+[2024-12-16T14:17:44.461+0000] {spark_submit.py:579} INFO - found org.apache.hadoop#hadoop-aws;3.3.4 in spark-list
+[2024-12-16T14:17:44.557+0000] {spark_submit.py:579} INFO - found com.amazonaws#aws-java-sdk-bundle;1.12.262 in central
+[2024-12-16T14:17:44.638+0000] {spark_submit.py:579} INFO - found org.wildfly.openssl#wildfly-openssl;1.0.7.Final in spark-list
+[2024-12-16T14:17:44.690+0000] {spark_submit.py:579} INFO - :: resolution report :: resolve 759ms :: artifacts dl 11ms
+[2024-12-16T14:17:44.691+0000] {spark_submit.py:579} INFO - :: modules in use:
+[2024-12-16T14:17:44.696+0000] {spark_submit.py:579} INFO - com.amazonaws#aws-java-sdk-bundle;1.12.262 from central in [default]
+[2024-12-16T14:17:44.697+0000] {spark_submit.py:579} INFO - org.apache.hadoop#hadoop-aws;3.3.4 from spark-list in [default]
+[2024-12-16T14:17:44.698+0000] {spark_submit.py:579} INFO - org.wildfly.openssl#wildfly-openssl;1.0.7.Final from spark-list in [default]
+[2024-12-16T14:17:44.698+0000] {spark_submit.py:579} INFO - ---------------------------------------------------------------------
+[2024-12-16T14:17:44.699+0000] {spark_submit.py:579} INFO - |                  |            modules            ||   artifacts   |
+[2024-12-16T14:17:44.699+0000] {spark_submit.py:579} INFO - |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+[2024-12-16T14:17:44.702+0000] {spark_submit.py:579} INFO - ---------------------------------------------------------------------
+[2024-12-16T14:17:44.703+0000] {spark_submit.py:579} INFO - |      default     |   3   |   0   |   0   |   0   ||   3   |   0   |
+[2024-12-16T14:17:44.704+0000] {spark_submit.py:579} INFO - ---------------------------------------------------------------------
+[2024-12-16T14:17:44.704+0000] {spark_submit.py:579} INFO - :: retrieving :: org.apache.spark#spark-submit-parent-092ab3f2-3f76-4d52-9f9f-250494103ec0
+[2024-12-16T14:17:44.704+0000] {spark_submit.py:579} INFO - confs: [default]
+[2024-12-16T14:17:44.715+0000] {spark_submit.py:579} INFO - 0 artifacts copied, 3 already retrieved (0kB/13ms)
+[2024-12-16T14:17:45.526+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:45 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+[2024-12-16T14:17:47.803+0000] {spark_submit.py:579} INFO - 2024-12-16 14:17:47,802 INFO: Initializing Spark session...
+[2024-12-16T14:17:48.134+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:48 INFO SparkContext: Running Spark version 3.3.2
+[2024-12-16T14:17:48.186+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:48 INFO ResourceUtils: ==============================================================
+[2024-12-16T14:17:48.188+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:48 INFO ResourceUtils: No custom resources configured for spark.driver.
+[2024-12-16T14:17:48.191+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:48 INFO ResourceUtils: ==============================================================
+[2024-12-16T14:17:48.192+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:48 INFO SparkContext: Submitted application: CleanMovies
+[2024-12-16T14:17:48.244+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:48 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 2, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+[2024-12-16T14:17:48.272+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:48 INFO ResourceProfile: Limiting resource is cpus at 2 tasks per executor
+[2024-12-16T14:17:48.276+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:48 INFO ResourceProfileManager: Added ResourceProfile id: 0
+[2024-12-16T14:17:48.396+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:48 INFO SecurityManager: Changing view acls to: ***
+[2024-12-16T14:17:48.397+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:48 INFO SecurityManager: Changing modify acls to: ***
+[2024-12-16T14:17:48.419+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:48 INFO SecurityManager: Changing view acls groups to:
+[2024-12-16T14:17:48.420+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:48 INFO SecurityManager: Changing modify acls groups to:
+[2024-12-16T14:17:48.422+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:48 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users  with view permissions: Set(***); groups with view permissions: Set(); users  with modify permissions: Set(***); groups with modify permissions: Set()
+[2024-12-16T14:17:49.314+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:49 INFO Utils: Successfully started service 'sparkDriver' on port 42917.
+[2024-12-16T14:17:49.366+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:49 INFO SparkEnv: Registering MapOutputTracker
+[2024-12-16T14:17:49.431+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:49 INFO SparkEnv: Registering BlockManagerMaster
+[2024-12-16T14:17:49.483+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:49 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+[2024-12-16T14:17:49.486+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:49 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+[2024-12-16T14:17:49.494+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:49 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+[2024-12-16T14:17:49.580+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:49 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-8ad1926c-add5-4574-a727-9ee8b0cff748
+[2024-12-16T14:17:49.618+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:49 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+[2024-12-16T14:17:49.694+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:49 INFO SparkEnv: Registering OutputCommitCoordinator
+[2024-12-16T14:17:50.072+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:50 WARN Utils: Service 'SparkUI' could not bind on port 4040. Attempting port 4041.
+[2024-12-16T14:17:50.075+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:50 WARN Utils: Service 'SparkUI' could not bind on port 4041. Attempting port 4042.
+[2024-12-16T14:17:50.077+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:50 WARN Utils: Service 'SparkUI' could not bind on port 4042. Attempting port 4043.
+[2024-12-16T14:17:50.086+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:50 INFO Utils: Successfully started service 'SparkUI' on port 4043.
+[2024-12-16T14:17:50.193+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:50 INFO SparkContext: Added JAR file:///opt/***/jars/hadoop-aws-3.3.4.jar at spark://a2b73f6a4b3a:42917/jars/hadoop-aws-3.3.4.jar with timestamp 1734358668115
+[2024-12-16T14:17:50.196+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:50 INFO SparkContext: Added JAR file:///opt/***/jars/s3-2.18.41.jar at spark://a2b73f6a4b3a:42917/jars/s3-2.18.41.jar with timestamp 1734358668115
+[2024-12-16T14:17:50.198+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:50 INFO SparkContext: Added JAR file:///opt/***/jars/aws-java-sdk-1.12.367.jar at spark://a2b73f6a4b3a:42917/jars/aws-java-sdk-1.12.367.jar with timestamp 1734358668115
+[2024-12-16T14:17:50.200+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:50 INFO SparkContext: Added JAR file:///opt/***/jars/delta-core_2.12-2.2.0.jar at spark://a2b73f6a4b3a:42917/jars/delta-core_2.12-2.2.0.jar with timestamp 1734358668115
+[2024-12-16T14:17:50.214+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:50 INFO SparkContext: Added JAR file:///opt/***/jars/delta-storage-2.2.0.jar at spark://a2b73f6a4b3a:42917/jars/delta-storage-2.2.0.jar with timestamp 1734358668115
+[2024-12-16T14:17:50.216+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:50 INFO SparkContext: Added JAR file:///home/***/.ivy2/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar at spark://a2b73f6a4b3a:42917/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar with timestamp 1734358668115
+[2024-12-16T14:17:50.217+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:50 INFO SparkContext: Added JAR file:///home/***/.ivy2/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar at spark://a2b73f6a4b3a:42917/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar with timestamp 1734358668115
+[2024-12-16T14:17:50.217+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:50 INFO SparkContext: Added JAR file:///home/***/.ivy2/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar at spark://a2b73f6a4b3a:42917/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar with timestamp 1734358668115
+[2024-12-16T14:17:50.219+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:50 INFO SparkContext: Added file file:///home/***/.ivy2/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar at spark://a2b73f6a4b3a:42917/files/org.apache.hadoop_hadoop-aws-3.3.4.jar with timestamp 1734358668115
+[2024-12-16T14:17:50.223+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:50 INFO Utils: Copying /home/***/.ivy2/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar to /tmp/spark-418bf5f7-52fd-427d-b283-c014e1288e5d/userFiles-edcf35c1-b185-4019-a25e-fa7f85c57a0e/org.apache.hadoop_hadoop-aws-3.3.4.jar
+[2024-12-16T14:17:50.241+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:50 INFO SparkContext: Added file file:///home/***/.ivy2/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar at spark://a2b73f6a4b3a:42917/files/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar with timestamp 1734358668115
+[2024-12-16T14:17:50.243+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:50 INFO Utils: Copying /home/***/.ivy2/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar to /tmp/spark-418bf5f7-52fd-427d-b283-c014e1288e5d/userFiles-edcf35c1-b185-4019-a25e-fa7f85c57a0e/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar
+[2024-12-16T14:17:52.335+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:52 INFO SparkContext: Added file file:///home/***/.ivy2/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar at spark://a2b73f6a4b3a:42917/files/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar with timestamp 1734358668115
+[2024-12-16T14:17:52.336+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:52 INFO Utils: Copying /home/***/.ivy2/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar to /tmp/spark-418bf5f7-52fd-427d-b283-c014e1288e5d/userFiles-edcf35c1-b185-4019-a25e-fa7f85c57a0e/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar
+[2024-12-16T14:17:52.601+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:52 INFO StandaloneAppClient$ClientEndpoint: Connecting to master spark://spark-master:7077...
+[2024-12-16T14:17:52.698+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:52 INFO TransportClientFactory: Successfully created connection to spark-master/172.18.0.5:7077 after 59 ms (0 ms spent in bootstraps)
+[2024-12-16T14:17:54.100+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:54 INFO StandaloneSchedulerBackend: Connected to Spark cluster with app ID app-20241216141754-0003
+[2024-12-16T14:17:54.115+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:54 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 45841.
+[2024-12-16T14:17:54.116+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:54 INFO NettyBlockTransferService: Server created on a2b73f6a4b3a:45841
+[2024-12-16T14:17:54.120+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:54 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+[2024-12-16T14:17:54.133+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:54 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, a2b73f6a4b3a, 45841, None)
+[2024-12-16T14:17:54.140+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:54 INFO BlockManagerMasterEndpoint: Registering block manager a2b73f6a4b3a:45841 with 434.4 MiB RAM, BlockManagerId(driver, a2b73f6a4b3a, 45841, None)
+[2024-12-16T14:17:54.144+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:54 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, a2b73f6a4b3a, 45841, None)
+[2024-12-16T14:17:54.146+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:54 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, a2b73f6a4b3a, 45841, None)
+[2024-12-16T14:17:54.574+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:54 INFO StandaloneSchedulerBackend: SchedulerBackend is ready for scheduling beginning after reached minRegisteredResourcesRatio: 0.0
+[2024-12-16T14:17:55.063+0000] {spark_submit.py:579} INFO - 2024-12-16 14:17:55,062 INFO: Spark session initialized successfully.
+[2024-12-16T14:17:55.063+0000] {spark_submit.py:579} INFO - 2024-12-16 14:17:55,063 INFO: Reading data from s3a://lakehouse/bronze/movies.parquet
+[2024-12-16T14:17:55.079+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:55 INFO SharedState: Setting hive.metastore.warehouse.dir ('null') to the value of spark.sql.warehouse.dir.
+[2024-12-16T14:17:55.417+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:55 WARN MetricsConfig: Cannot locate configuration: tried hadoop-metrics2-s3a-file-system.properties,hadoop-metrics2.properties
+[2024-12-16T14:17:55.440+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:55 INFO MetricsSystemImpl: Scheduled Metric snapshot period at 10 second(s).
+[2024-12-16T14:17:55.442+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:55 INFO MetricsSystemImpl: s3a-file-system metrics system started
+[2024-12-16T14:17:57.872+0000] {spark_submit.py:579} INFO - 24/12/16 14:17:57 INFO SharedState: Warehouse path is 's3a://lakehouse/'.
+[2024-12-16T14:18:00.822+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:00 INFO InMemoryFileIndex: It took 211 ms to list leaf files for 1 paths.
+[2024-12-16T14:18:04.648+0000] {spark_submit.py:579} INFO - 2024-12-16 14:18:04,647 INFO: Saving cleaned data to s3a://lakehouse/sliver/movies
+[2024-12-16T14:18:05.241+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:05 WARN package: Truncated the string representation of a plan since it was too large. This behavior can be adjusted by setting 'spark.sql.debug.maxToStringFields'.
+[2024-12-16T14:18:05.768+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:05 INFO DeltaLog: Creating initial snapshot without metadata, because the directory is empty
+[2024-12-16T14:18:05.989+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:05 INFO InitialSnapshot: [tableId=a3134d88-9e27-4f89-bd14-bca27ba09a7d] Created snapshot InitialSnapshot(path=s3a://lakehouse/sliver/movies/_delta_log, version=-1, metadata=Metadata(ccb15aca-dd33-4ae3-a50f-a9da6c5b68ec,null,null,Format(parquet,Map()),null,List(),Map(),Some(1734358685977)), logSegment=LogSegment(s3a://lakehouse/sliver/movies/_delta_log,-1,List(),List(),None,-1), checksumOpt=None)
+[2024-12-16T14:18:06.108+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:06 INFO DeltaLog: No delta log found for the Delta table at s3a://lakehouse/sliver/movies/_delta_log
+[2024-12-16T14:18:06.110+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:06 INFO InitialSnapshot: [tableId=ccb15aca-dd33-4ae3-a50f-a9da6c5b68ec] Created snapshot InitialSnapshot(path=s3a://lakehouse/sliver/movies/_delta_log, version=-1, metadata=Metadata(ec43d310-e7a2-4d9c-a545-4232a34dbb43,null,null,Format(parquet,Map()),null,List(),Map(),Some(1734358686109)), logSegment=LogSegment(s3a://lakehouse/sliver/movies/_delta_log,-1,List(),List(),None,-1), checksumOpt=None)
+[2024-12-16T14:18:06.180+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:06 INFO OptimisticTransaction: [tableId=ec43d310,txnId=cdc9c4a6] Updated metadata from - to Metadata(48e9ce08-2d19-476f-bd39-0f0f49000c5a,null,null,Format(parquet,Map()),{"type":"struct","fields":[{"name":"budget","type":"integer","nullable":true,"metadata":{}},{"name":"genres","type":"string","nullable":true,"metadata":{}},{"name":"genres_convert","type":"string","nullable":true,"metadata":{}},{"name":"id","type":"string","nullable":true,"metadata":{}},{"name":"imdb_id","type":"string","nullable":true,"metadata":{}},{"name":"original_language","type":"string","nullable":true,"metadata":{}},{"name":"original_title","type":"string","nullable":true,"metadata":{}},{"name":"overview","type":"string","nullable":true,"metadata":{}},{"name":"popularity","type":"string","nullable":true,"metadata":{}},{"name":"poster_path","type":"string","nullable":true,"metadata":{}},{"name":"release_date","type":"date","nullable":true,"metadata":{}},{"name":"revenue","type":"double","nullable":true,"metadata":{}},{"name":"status","type":"string","nullable":true,"metadata":{}},{"name":"tagline","type":"string","nullable":true,"metadata":{}},{"name":"time","type":"string","nullable":true,"metadata":{}},{"name":"title","type":"string","nullable":true,"metadata":{}},{"name":"vote_average","type":"double","nullable":true,"metadata":{}},{"name":"vote_count","type":"double","nullable":true,"metadata":{}}]},List(),Map(),Some(1734358686155))
+[2024-12-16T14:18:07.064+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:07 INFO FileSourceStrategy: Pushed Filters:
+[2024-12-16T14:18:07.067+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:07 INFO FileSourceStrategy: Post-Scan Filters:
+[2024-12-16T14:18:07.072+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:07 INFO FileSourceStrategy: Output Data Schema: struct<budget: string, genres: string, id: string, imdb_id: string, original_language: string ... 15 more fields>
+[2024-12-16T14:18:07.200+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:07 INFO DeltaParquetFileFormat: Using default output committer for Parquet: org.apache.parquet.hadoop.ParquetOutputCommitter
+[2024-12-16T14:18:07.717+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:07 INFO CodeGenerator: Code generated in 330.058797 ms
+[2024-12-16T14:18:07.790+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:07 INFO MemoryStore: Block broadcast_0 stored as values in memory (estimated size 208.3 KiB, free 434.2 MiB)
+[2024-12-16T14:18:07.955+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:07 INFO MemoryStore: Block broadcast_0_piece0 stored as bytes in memory (estimated size 36.6 KiB, free 434.2 MiB)
+[2024-12-16T14:18:07.966+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:07 INFO BlockManagerInfo: Added broadcast_0_piece0 in memory on a2b73f6a4b3a:45841 (size: 36.6 KiB, free: 434.4 MiB)
+[2024-12-16T14:18:07.977+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:07 INFO SparkContext: Created broadcast 0 from save at NativeMethodAccessorImpl.java:0
+[2024-12-16T14:18:08.006+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:08 INFO FileSourceScanExec: Planning scan with bin packing, max size: 10691623 bytes, open cost is considered as scanning 4194304 bytes.
+[2024-12-16T14:18:08.382+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:08 INFO SparkContext: Starting job: save at NativeMethodAccessorImpl.java:0
+[2024-12-16T14:18:08.402+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:08 INFO DAGScheduler: Got job 0 (save at NativeMethodAccessorImpl.java:0) with 2 output partitions
+[2024-12-16T14:18:08.403+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:08 INFO DAGScheduler: Final stage: ResultStage 0 (save at NativeMethodAccessorImpl.java:0)
+[2024-12-16T14:18:08.404+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:08 INFO DAGScheduler: Parents of final stage: List()
+[2024-12-16T14:18:08.406+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:08 INFO DAGScheduler: Missing parents: List()
+[2024-12-16T14:18:08.416+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:08 INFO DAGScheduler: Submitting ResultStage 0 (MapPartitionsRDD[3] at save at NativeMethodAccessorImpl.java:0), which has no missing parents
+[2024-12-16T14:18:08.615+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:08 INFO MemoryStore: Block broadcast_1 stored as values in memory (estimated size 381.9 KiB, free 433.8 MiB)
+[2024-12-16T14:18:08.620+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:08 INFO MemoryStore: Block broadcast_1_piece0 stored as bytes in memory (estimated size 133.1 KiB, free 433.7 MiB)
+[2024-12-16T14:18:08.620+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:08 INFO BlockManagerInfo: Added broadcast_1_piece0 in memory on a2b73f6a4b3a:45841 (size: 133.1 KiB, free: 434.2 MiB)
+[2024-12-16T14:18:08.621+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:08 INFO SparkContext: Created broadcast 1 from broadcast at DAGScheduler.scala:1513
+[2024-12-16T14:18:08.640+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:08 INFO DAGScheduler: Submitting 2 missing tasks from ResultStage 0 (MapPartitionsRDD[3] at save at NativeMethodAccessorImpl.java:0) (first 15 tasks are for partitions Vector(0, 1))
+[2024-12-16T14:18:08.642+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:08 INFO TaskSchedulerImpl: Adding task set 0.0 with 2 tasks resource profile 0
+[2024-12-16T14:18:23.693+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:23 WARN TaskSchedulerImpl: Initial job has not accepted any resources; check your cluster UI to ensure that workers are registered and have sufficient resources
+[2024-12-16T14:18:38.693+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:38 WARN TaskSchedulerImpl: Initial job has not accepted any resources; check your cluster UI to ensure that workers are registered and have sufficient resources
+[2024-12-16T14:18:53.693+0000] {spark_submit.py:579} INFO - 24/12/16 14:18:53 WARN TaskSchedulerImpl: Initial job has not accepted any resources; check your cluster UI to ensure that workers are registered and have sufficient resources
+[2024-12-16T14:19:08.853+0000] {spark_submit.py:579} INFO - 24/12/16 14:19:08 WARN TaskSchedulerImpl: Initial job has not accepted any resources; check your cluster UI to ensure that workers are registered and have sufficient resources
+[2024-12-16T14:19:23.802+0000] {spark_submit.py:579} INFO - 24/12/16 14:19:23 WARN TaskSchedulerImpl: Initial job has not accepted any resources; check your cluster UI to ensure that workers are registered and have sufficient resources
+[2024-12-16T14:19:22.367+0000] {job.py:219} ERROR - Job heartbeat got an exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 3371, in _wrap_pool_connect
+    return fn()
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 327, in connect
+    return _ConnectionFairy._checkout(self)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 894, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 493, in checkout
+    rec = pool._do_get()
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/impl.py", line 256, in _do_get
+    return self._create_connection()
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 273, in _create_connection
+    return _ConnectionRecord(self)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 388, in __init__
+    self.__connect()
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 691, in __connect
+    pool.logger.debug("Error on connect(): %s", e)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/util/langhelpers.py", line 70, in __exit__
+    compat.raise_(
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/util/compat.py", line 211, in raise_
+    raise exception
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 686, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/engine/create.py", line 574, in connect
+    return dialect.connect(*cargs, **cparams)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 598, in connect
+    return self.dbapi.connect(*cargs, **cparams)
+  File "/home/airflow/.local/lib/python3.9/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: could not translate host name "postgres" to address: Temporary failure in name resolution
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/jobs/job.py", line 190, in heartbeat
+    session.merge(self)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 3056, in merge
+    return self._merge(
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 3136, in _merge
+    merged = self.get(
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2853, in get
+    return self._get_impl(
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2975, in _get_impl
+    return db_load_fn(
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/orm/loading.py", line 530, in load_on_pk_identity
+    session.execute(
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 1716, in execute
+    conn = self._connection_for_bind(bind)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 1555, in _connection_for_bind
+    return self._transaction._connection_for_bind(
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 750, in _connection_for_bind
+    conn = bind.connect()
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/future/engine.py", line 406, in connect
+    return super(Engine, self).connect()
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 3325, in connect
+    return self._connection_cls(self, close_with_result=close_with_result)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 96, in __init__
+    else engine.raw_connection()
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 3404, in raw_connection
+    return self._wrap_pool_connect(self.pool.connect, _connection)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 3374, in _wrap_pool_connect
+    Connection._handle_dbapi_exception_noconnection(
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 2208, in _handle_dbapi_exception_noconnection
+    util.raise_(
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/util/compat.py", line 211, in raise_
+    raise exception
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 3371, in _wrap_pool_connect
+    return fn()
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 327, in connect
+    return _ConnectionFairy._checkout(self)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 894, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 493, in checkout
+    rec = pool._do_get()
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/impl.py", line 256, in _do_get
+    return self._create_connection()
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 273, in _create_connection
+    return _ConnectionRecord(self)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 388, in __init__
+    self.__connect()
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 691, in __connect
+    pool.logger.debug("Error on connect(): %s", e)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/util/langhelpers.py", line 70, in __exit__
+    compat.raise_(
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/util/compat.py", line 211, in raise_
+    raise exception
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 686, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/engine/create.py", line 574, in connect
+    return dialect.connect(*cargs, **cparams)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 598, in connect
+    return self.dbapi.connect(*cargs, **cparams)
+  File "/home/airflow/.local/lib/python3.9/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not translate host name "postgres" to address: Temporary failure in name resolution
+
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+[2024-12-16T14:19:41.723+0000] {spark_submit.py:579} INFO - 24/12/16 14:19:39 WARN TaskSchedulerImpl: Initial job has not accepted any resources; check your cluster UI to ensure that workers are registered and have sufficient resources
+[2024-12-16T14:20:03.822+0000] {spark_submit.py:579} INFO - 24/12/16 14:19:59 WARN TaskSchedulerImpl: Initial job has not accepted any resources; check your cluster UI to ensure that workers are registered and have sufficient resources
+[2024-12-16T14:20:04.575+0000] {spark_submit.py:579} INFO - 24/12/16 14:20:04 INFO AsyncEventQueue: Process of event SparkListenerExecutorMetricsUpdate(driver,WrappedArray(),Map((-1,-1) -> org.apache.spark.executor.ExecutorMetrics@6738d3f)) by listener AppStatusListener took 3.780024011s.
+[2024-12-16T14:20:04.979+0000] {job.py:219} ERROR - Job heartbeat got an exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 3371, in _wrap_pool_connect
+    return fn()
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 327, in connect
+    return _ConnectionFairy._checkout(self)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 894, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 493, in checkout
+    rec = pool._do_get()
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/impl.py", line 256, in _do_get
+    return self._create_connection()
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 273, in _create_connection
+    return _ConnectionRecord(self)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 388, in __init__
+    self.__connect()
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 691, in __connect
+    pool.logger.debug("Error on connect(): %s", e)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/util/langhelpers.py", line 70, in __exit__
+    compat.raise_(
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/util/compat.py", line 211, in raise_
+    raise exception
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 686, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/engine/create.py", line 574, in connect
+    return dialect.connect(*cargs, **cparams)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 598, in connect
+    return self.dbapi.connect(*cargs, **cparams)
+  File "/home/airflow/.local/lib/python3.9/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: could not translate host name "postgres" to address: Temporary failure in name resolution
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/jobs/job.py", line 190, in heartbeat
+    session.merge(self)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 3056, in merge
+    return self._merge(
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 3136, in _merge
+    merged = self.get(
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2853, in get
+    return self._get_impl(
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 2975, in _get_impl
+    return db_load_fn(
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/orm/loading.py", line 530, in load_on_pk_identity
+    session.execute(
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 1716, in execute
+    conn = self._connection_for_bind(bind)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 1555, in _connection_for_bind
+    return self._transaction._connection_for_bind(
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/orm/session.py", line 750, in _connection_for_bind
+    conn = bind.connect()
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/future/engine.py", line 406, in connect
+    return super(Engine, self).connect()
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 3325, in connect
+    return self._connection_cls(self, close_with_result=close_with_result)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 96, in __init__
+    else engine.raw_connection()
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 3404, in raw_connection
+    return self._wrap_pool_connect(self.pool.connect, _connection)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 3374, in _wrap_pool_connect
+    Connection._handle_dbapi_exception_noconnection(
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 2208, in _handle_dbapi_exception_noconnection
+    util.raise_(
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/util/compat.py", line 211, in raise_
+    raise exception
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/engine/base.py", line 3371, in _wrap_pool_connect
+    return fn()
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 327, in connect
+    return _ConnectionFairy._checkout(self)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 894, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 493, in checkout
+    rec = pool._do_get()
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/impl.py", line 256, in _do_get
+    return self._create_connection()
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 273, in _create_connection
+    return _ConnectionRecord(self)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 388, in __init__
+    self.__connect()
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 691, in __connect
+    pool.logger.debug("Error on connect(): %s", e)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/util/langhelpers.py", line 70, in __exit__
+    compat.raise_(
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/util/compat.py", line 211, in raise_
+    raise exception
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/pool/base.py", line 686, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/engine/create.py", line 574, in connect
+    return dialect.connect(*cargs, **cparams)
+  File "/home/airflow/.local/lib/python3.9/site-packages/sqlalchemy/engine/default.py", line 598, in connect
+    return self.dbapi.connect(*cargs, **cparams)
+  File "/home/airflow/.local/lib/python3.9/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not translate host name "postgres" to address: Temporary failure in name resolution
+
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+[2024-12-16T14:20:09.294+0000] {spark_submit.py:579} INFO - 24/12/16 14:20:09 WARN TaskSchedulerImpl: Initial job has not accepted any resources; check your cluster UI to ensure that workers are registered and have sufficient resources
+[2024-12-16T14:20:14.776+0000] {spark_submit.py:579} INFO - 24/12/16 14:20:14 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20241216141754-0003/0 on worker-20241216141212-172.18.0.9-45515 (172.18.0.9:45515) with 2 core(s)
+[2024-12-16T14:20:14.778+0000] {spark_submit.py:579} INFO - 24/12/16 14:20:14 INFO StandaloneSchedulerBackend: Granted executor ID app-20241216141754-0003/0 on hostPort 172.18.0.9:45515 with 2 core(s), 1024.0 MiB RAM
+[2024-12-16T14:20:15.099+0000] {local_task_job_runner.py:294} WARNING - State of this instance has been externally set to restarting. Terminating instance.
+[2024-12-16T14:20:15.122+0000] {process_utils.py:131} INFO - Sending 15 to group 660. PIDs of all processes in the group: [666, 961, 660]
+[2024-12-16T14:20:15.152+0000] {process_utils.py:86} INFO - Sending the signal 15 to group 660
+[2024-12-16T14:20:15.191+0000] {taskinstance.py:1632} ERROR - Received SIGTERM. Terminating subprocesses.
+[2024-12-16T14:20:15.197+0000] {spark_submit.py:705} INFO - Sending kill signal to spark-submit
+[2024-12-16T14:20:15.515+0000] {process_utils.py:79} INFO - Process psutil.Process(pid=961, status='terminated', started='14:17:46') (961) terminated with exit code None
+[2024-12-16T14:20:15.795+0000] {taskinstance.py:1937} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/providers/apache/spark/operators/spark_submit.py", line 174, in execute
+    self._hook.submit(self.application)
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/providers/apache/spark/hooks/spark_submit.py", line 493, in submit
+    self._process_spark_submit_log(iter(self._submit_sp.stdout))  # type: ignore
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/providers/apache/spark/hooks/spark_submit.py", line 542, in _process_spark_submit_log
+    for line in itr:
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/models/taskinstance.py", line 1634, in signal_handler
+    raise AirflowException("Task received SIGTERM signal")
+airflow.exceptions.AirflowException: Task received SIGTERM signal
+[2024-12-16T14:20:15.851+0000] {taskinstance.py:1400} INFO - Marking task as UP_FOR_RETRY. dag_id=All_Layer, task_id=clean_movies, execution_date=20241216T141720, start_date=20241216T141737, end_date=20241216T142015
+[2024-12-16T14:20:16.001+0000] {standard_task_runner.py:104} ERROR - Failed to execute job 212 for task clean_movies (Task received SIGTERM signal; 660)
+[2024-12-16T14:20:16.031+0000] {process_utils.py:79} INFO - Process psutil.Process(pid=666, status='terminated', started='14:17:37') (666) terminated with exit code None
+[2024-12-16T14:20:16.032+0000] {process_utils.py:79} INFO - Process psutil.Process(pid=660, status='terminated', exitcode=1, started='14:17:37') (660) terminated with exit code 1

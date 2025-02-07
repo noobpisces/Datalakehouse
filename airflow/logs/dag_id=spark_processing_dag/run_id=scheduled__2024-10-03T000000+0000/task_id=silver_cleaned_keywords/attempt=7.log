@@ -1,0 +1,100 @@
+[2024-10-05T06:18:48.424+0000] {taskinstance.py:1157} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: spark_processing_dag.silver_cleaned_keywords scheduled__2024-10-03T00:00:00+00:00 [queued]>
+[2024-10-05T06:18:48.432+0000] {taskinstance.py:1157} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: spark_processing_dag.silver_cleaned_keywords scheduled__2024-10-03T00:00:00+00:00 [queued]>
+[2024-10-05T06:18:48.433+0000] {taskinstance.py:1359} INFO - Starting attempt 7 of 7
+[2024-10-05T06:18:48.444+0000] {taskinstance.py:1380} INFO - Executing <Task(SparkSubmitOperator): silver_cleaned_keywords> on 2024-10-03 00:00:00+00:00
+[2024-10-05T06:18:48.448+0000] {standard_task_runner.py:57} INFO - Started process 198 to run task
+[2024-10-05T06:18:48.452+0000] {standard_task_runner.py:84} INFO - Running: ['***', 'tasks', 'run', 'spark_processing_dag', 'silver_cleaned_keywords', 'scheduled__2024-10-03T00:00:00+00:00', '--job-id', '143', '--raw', '--subdir', 'DAGS_FOLDER/sliver_layer.py', '--cfg-path', '/tmp/tmpuug8pnvs']
+[2024-10-05T06:18:48.455+0000] {standard_task_runner.py:85} INFO - Job 143: Subtask silver_cleaned_keywords
+[2024-10-05T06:18:48.500+0000] {task_command.py:415} INFO - Running <TaskInstance: spark_processing_dag.silver_cleaned_keywords scheduled__2024-10-03T00:00:00+00:00 [running]> on host 5d09c913dd59
+[2024-10-05T06:18:48.559+0000] {taskinstance.py:1660} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='spark_processing_dag' AIRFLOW_CTX_TASK_ID='silver_cleaned_keywords' AIRFLOW_CTX_EXECUTION_DATE='2024-10-03T00:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='7' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2024-10-03T00:00:00+00:00'
+[2024-10-05T06:18:48.568+0000] {base.py:73} INFO - Using connection ID 'spark-conn' for task execution.
+[2024-10-05T06:18:48.570+0000] {spark_submit.py:403} INFO - Spark-Submit cmd: spark-submit --master spark://spark-master:7077 --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog --conf spark.delta.logStore.class=org.apache.spark.sql.delta.storage.S3SingleDriverLogStore --jars /opt/***/jars/hadoop-aws-3.3.4.jar,/opt/***/jars/s3-2.18.41.jar,/opt/***/jars/aws-java-sdk-1.12.367.jar,/opt/***/jars/delta-core_2.12:2.4.0.jar,/opt/***/jars/delta-storage-2.2.0.jar --packages org.apache.hadoop:hadoop-aws:3.3.4,io.delta:delta-core_2.12:2.4.0 --num-executors 2 --total-executor-cores 2 --executor-cores 2 --executor-memory 2g --driver-memory 1g --name arrow-spark --deploy-mode client /opt/***/jobs/python/test_Key.py s3a://lakehouse/bronze/keywords.parquet s3a://lakehouse/silver
+[2024-10-05T06:18:48.647+0000] {spark_submit.py:579} INFO - /home/***/.local/lib/python3.11/site-packages/pyspark/bin/load-spark-env.sh: line 68: ps: command not found
+[2024-10-05T06:18:50.281+0000] {spark_submit.py:579} INFO - :: loading settings :: url = jar:file:/home/***/.local/lib/python3.11/site-packages/pyspark/jars/ivy-2.5.1.jar!/org/apache/ivy/core/settings/ivysettings.xml
+[2024-10-05T06:18:50.364+0000] {spark_submit.py:579} INFO - Ivy Default Cache set to: /home/***/.ivy2/cache
+[2024-10-05T06:18:50.365+0000] {spark_submit.py:579} INFO - The jars for the packages stored in: /home/***/.ivy2/jars
+[2024-10-05T06:18:50.369+0000] {spark_submit.py:579} INFO - org.apache.hadoop#hadoop-aws added as a dependency
+[2024-10-05T06:18:50.370+0000] {spark_submit.py:579} INFO - io.delta#delta-core_2.12 added as a dependency
+[2024-10-05T06:18:50.370+0000] {spark_submit.py:579} INFO - :: resolving dependencies :: org.apache.spark#spark-submit-parent-5c553722-6b74-4508-b4a7-a20f45a4b71b;1.0
+[2024-10-05T06:18:50.371+0000] {spark_submit.py:579} INFO - confs: [default]
+[2024-10-05T06:18:54.970+0000] {spark_submit.py:579} INFO - found org.apache.hadoop#hadoop-aws;3.3.4 in central
+[2024-10-05T06:18:56.833+0000] {spark_submit.py:579} INFO - found com.amazonaws#aws-java-sdk-bundle;1.12.262 in central
+[2024-10-05T06:19:00.119+0000] {spark_submit.py:579} INFO - found org.wildfly.openssl#wildfly-openssl;1.0.7.Final in central
+[2024-10-05T06:19:00.518+0000] {spark_submit.py:579} INFO - found io.delta#delta-core_2.12;2.4.0 in central
+[2024-10-05T06:19:00.932+0000] {spark_submit.py:579} INFO - found io.delta#delta-storage;2.4.0 in central
+[2024-10-05T06:19:03.955+0000] {spark_submit.py:579} INFO - found org.antlr#antlr4-runtime;4.9.3 in central
+[2024-10-05T06:19:04.157+0000] {spark_submit.py:579} INFO - downloading https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar ...
+[2024-10-05T06:19:04.946+0000] {spark_submit.py:579} INFO - [SUCCESSFUL ] org.apache.hadoop#hadoop-aws;3.3.4!hadoop-aws.jar (984ms)
+[2024-10-05T06:19:05.161+0000] {spark_submit.py:579} INFO - downloading https://repo1.maven.org/maven2/io/delta/delta-core_2.12/2.4.0/delta-core_2.12-2.4.0.jar ...
+[2024-10-05T06:19:06.049+0000] {spark_submit.py:579} INFO - [SUCCESSFUL ] io.delta#delta-core_2.12;2.4.0!delta-core_2.12.jar (1102ms)
+[2024-10-05T06:19:06.243+0000] {spark_submit.py:579} INFO - downloading https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.262/aws-java-sdk-bundle-1.12.262.jar ...
+[2024-10-05T06:23:47.571+0000] {spark_submit.py:579} INFO - [SUCCESSFUL ] com.amazonaws#aws-java-sdk-bundle;1.12.262!aws-java-sdk-bundle.jar (281520ms)
+[2024-10-05T06:23:47.766+0000] {spark_submit.py:579} INFO - downloading https://repo1.maven.org/maven2/org/wildfly/openssl/wildfly-openssl/1.0.7.Final/wildfly-openssl-1.0.7.Final.jar ...
+[2024-10-05T06:23:48.365+0000] {spark_submit.py:579} INFO - [SUCCESSFUL ] org.wildfly.openssl#wildfly-openssl;1.0.7.Final!wildfly-openssl.jar (793ms)
+[2024-10-05T06:23:48.560+0000] {spark_submit.py:579} INFO - downloading https://repo1.maven.org/maven2/io/delta/delta-storage/2.4.0/delta-storage-2.4.0.jar ...
+[2024-10-05T06:23:48.774+0000] {spark_submit.py:579} INFO - [SUCCESSFUL ] io.delta#delta-storage;2.4.0!delta-storage.jar (407ms)
+[2024-10-05T06:23:48.969+0000] {spark_submit.py:579} INFO - downloading https://repo1.maven.org/maven2/org/antlr/antlr4-runtime/4.9.3/antlr4-runtime-4.9.3.jar ...
+[2024-10-05T06:23:49.511+0000] {spark_submit.py:579} INFO - [SUCCESSFUL ] org.antlr#antlr4-runtime;4.9.3!antlr4-runtime.jar (736ms)
+[2024-10-05T06:23:49.511+0000] {spark_submit.py:579} INFO - :: resolution report :: resolve 13592ms :: artifacts dl 285549ms
+[2024-10-05T06:23:49.512+0000] {spark_submit.py:579} INFO - :: modules in use:
+[2024-10-05T06:23:49.513+0000] {spark_submit.py:579} INFO - com.amazonaws#aws-java-sdk-bundle;1.12.262 from central in [default]
+[2024-10-05T06:23:49.513+0000] {spark_submit.py:579} INFO - io.delta#delta-core_2.12;2.4.0 from central in [default]
+[2024-10-05T06:23:49.513+0000] {spark_submit.py:579} INFO - io.delta#delta-storage;2.4.0 from central in [default]
+[2024-10-05T06:23:49.514+0000] {spark_submit.py:579} INFO - org.antlr#antlr4-runtime;4.9.3 from central in [default]
+[2024-10-05T06:23:49.514+0000] {spark_submit.py:579} INFO - org.apache.hadoop#hadoop-aws;3.3.4 from central in [default]
+[2024-10-05T06:23:49.514+0000] {spark_submit.py:579} INFO - org.wildfly.openssl#wildfly-openssl;1.0.7.Final from central in [default]
+[2024-10-05T06:23:49.514+0000] {spark_submit.py:579} INFO - ---------------------------------------------------------------------
+[2024-10-05T06:23:49.514+0000] {spark_submit.py:579} INFO - |                  |            modules            ||   artifacts   |
+[2024-10-05T06:23:49.515+0000] {spark_submit.py:579} INFO - |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+[2024-10-05T06:23:49.515+0000] {spark_submit.py:579} INFO - ---------------------------------------------------------------------
+[2024-10-05T06:23:49.515+0000] {spark_submit.py:579} INFO - |      default     |   6   |   6   |   6   |   0   ||   6   |   6   |
+[2024-10-05T06:23:49.515+0000] {spark_submit.py:579} INFO - ---------------------------------------------------------------------
+[2024-10-05T06:23:49.523+0000] {spark_submit.py:579} INFO - :: retrieving :: org.apache.spark#spark-submit-parent-5c553722-6b74-4508-b4a7-a20f45a4b71b
+[2024-10-05T06:23:49.524+0000] {spark_submit.py:579} INFO - confs: [default]
+[2024-10-05T06:23:49.758+0000] {spark_submit.py:579} INFO - 6 artifacts copied, 0 already retrieved (279959kB/235ms)
+[2024-10-05T06:23:49.925+0000] {spark_submit.py:579} INFO - 24/10/05 06:23:49 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+[2024-10-05T06:23:50.075+0000] {spark_submit.py:579} INFO - Exception in thread "main" java.lang.IllegalArgumentException: java.net.URISyntaxException: Relative path in absolute URI: delta-core_2.12:2.4.0.jar
+[2024-10-05T06:23:50.075+0000] {spark_submit.py:579} INFO - at org.apache.hadoop.fs.Path.initialize(Path.java:263)
+[2024-10-05T06:23:50.076+0000] {spark_submit.py:579} INFO - at org.apache.hadoop.fs.Path.<init>(Path.java:221)
+[2024-10-05T06:23:50.076+0000] {spark_submit.py:579} INFO - at org.apache.hadoop.fs.Path.<init>(Path.java:129)
+[2024-10-05T06:23:50.076+0000] {spark_submit.py:579} INFO - at org.apache.hadoop.fs.Globber.doGlob(Globber.java:350)
+[2024-10-05T06:23:50.077+0000] {spark_submit.py:579} INFO - at org.apache.hadoop.fs.Globber.glob(Globber.java:202)
+[2024-10-05T06:23:50.077+0000] {spark_submit.py:579} INFO - at org.apache.hadoop.fs.FileSystem.globStatus(FileSystem.java:2124)
+[2024-10-05T06:23:50.077+0000] {spark_submit.py:579} INFO - at org.apache.spark.util.DependencyUtils$.resolveGlobPath(DependencyUtils.scala:318)
+[2024-10-05T06:23:50.077+0000] {spark_submit.py:579} INFO - at org.apache.spark.util.DependencyUtils$.$anonfun$resolveGlobPaths$2(DependencyUtils.scala:273)
+[2024-10-05T06:23:50.078+0000] {spark_submit.py:579} INFO - at org.apache.spark.util.DependencyUtils$.$anonfun$resolveGlobPaths$2$adapted(DependencyUtils.scala:271)
+[2024-10-05T06:23:50.078+0000] {spark_submit.py:579} INFO - at scala.collection.TraversableLike.$anonfun$flatMap$1(TraversableLike.scala:293)
+[2024-10-05T06:23:50.078+0000] {spark_submit.py:579} INFO - at scala.collection.IndexedSeqOptimized.foreach(IndexedSeqOptimized.scala:36)
+[2024-10-05T06:23:50.078+0000] {spark_submit.py:579} INFO - at scala.collection.IndexedSeqOptimized.foreach$(IndexedSeqOptimized.scala:33)
+[2024-10-05T06:23:50.079+0000] {spark_submit.py:579} INFO - at scala.collection.mutable.WrappedArray.foreach(WrappedArray.scala:38)
+[2024-10-05T06:23:50.079+0000] {spark_submit.py:579} INFO - at scala.collection.TraversableLike.flatMap(TraversableLike.scala:293)
+[2024-10-05T06:23:50.079+0000] {spark_submit.py:579} INFO - at scala.collection.TraversableLike.flatMap$(TraversableLike.scala:290)
+[2024-10-05T06:23:50.079+0000] {spark_submit.py:579} INFO - at scala.collection.AbstractTraversable.flatMap(Traversable.scala:108)
+[2024-10-05T06:23:50.080+0000] {spark_submit.py:579} INFO - at org.apache.spark.util.DependencyUtils$.resolveGlobPaths(DependencyUtils.scala:271)
+[2024-10-05T06:23:50.080+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit.$anonfun$prepareSubmitEnvironment$4(SparkSubmit.scala:392)
+[2024-10-05T06:23:50.080+0000] {spark_submit.py:579} INFO - at scala.Option.map(Option.scala:230)
+[2024-10-05T06:23:50.080+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit.prepareSubmitEnvironment(SparkSubmit.scala:392)
+[2024-10-05T06:23:50.081+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit.org$apache$spark$deploy$SparkSubmit$$runMain(SparkSubmit.scala:964)
+[2024-10-05T06:23:50.081+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit.doRunMain$1(SparkSubmit.scala:194)
+[2024-10-05T06:23:50.081+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit.submit(SparkSubmit.scala:217)
+[2024-10-05T06:23:50.082+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit.doSubmit(SparkSubmit.scala:91)
+[2024-10-05T06:23:50.082+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit$$anon$2.doSubmit(SparkSubmit.scala:1120)
+[2024-10-05T06:23:50.082+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit$.main(SparkSubmit.scala:1129)
+[2024-10-05T06:23:50.082+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit.main(SparkSubmit.scala)
+[2024-10-05T06:23:50.083+0000] {spark_submit.py:579} INFO - Caused by: java.net.URISyntaxException: Relative path in absolute URI: delta-core_2.12:2.4.0.jar
+[2024-10-05T06:23:50.083+0000] {spark_submit.py:579} INFO - at java.base/java.net.URI.checkPath(URI.java:1940)
+[2024-10-05T06:23:50.083+0000] {spark_submit.py:579} INFO - at java.base/java.net.URI.<init>(URI.java:757)
+[2024-10-05T06:23:50.083+0000] {spark_submit.py:579} INFO - at org.apache.hadoop.fs.Path.initialize(Path.java:260)
+[2024-10-05T06:23:50.084+0000] {spark_submit.py:579} INFO - ... 26 more
+[2024-10-05T06:23:50.134+0000] {taskinstance.py:1935} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/providers/apache/spark/operators/spark_submit.py", line 174, in execute
+    self._hook.submit(self.application)
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/providers/apache/spark/hooks/spark_submit.py", line 505, in submit
+    raise AirflowException(
+airflow.exceptions.AirflowException: Cannot execute: spark-submit --master spark://spark-master:7077 --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog --conf spark.delta.logStore.class=org.apache.spark.sql.delta.storage.S3SingleDriverLogStore --jars /opt/***/jars/hadoop-aws-3.3.4.jar,/opt/***/jars/s3-2.18.41.jar,/opt/***/jars/aws-java-sdk-1.12.367.jar,/opt/***/jars/delta-core_2.12:2.4.0.jar,/opt/***/jars/delta-storage-2.2.0.jar --packages org.apache.hadoop:hadoop-aws:3.3.4,io.delta:delta-core_2.12:2.4.0 --num-executors 2 --total-executor-cores 2 --executor-cores 2 --executor-memory 2g --driver-memory 1g --name arrow-spark --deploy-mode client /opt/***/jobs/python/test_Key.py s3a://lakehouse/bronze/keywords.parquet s3a://lakehouse/silver. Error code is: 1.
+[2024-10-05T06:23:50.137+0000] {taskinstance.py:1398} INFO - Marking task as FAILED. dag_id=spark_processing_dag, task_id=silver_cleaned_keywords, execution_date=20241003T000000, start_date=20241005T061848, end_date=20241005T062350
+[2024-10-05T06:23:50.138+0000] {sliver_layer.py:15} ERROR - Task spark_processing_dag__silver_cleaned_keywords__20241003 failed.
+[2024-10-05T06:23:50.151+0000] {standard_task_runner.py:104} ERROR - Failed to execute job 143 for task silver_cleaned_keywords (Cannot execute: spark-submit --master spark://spark-master:7077 --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog --conf spark.delta.logStore.class=org.apache.spark.sql.delta.storage.S3SingleDriverLogStore --jars /opt/***/jars/hadoop-aws-3.3.4.jar,/opt/***/jars/s3-2.18.41.jar,/opt/***/jars/aws-java-sdk-1.12.367.jar,/opt/***/jars/delta-core_2.12:2.4.0.jar,/opt/***/jars/delta-storage-2.2.0.jar --packages org.apache.hadoop:hadoop-aws:3.3.4,io.delta:delta-core_2.12:2.4.0 --num-executors 2 --total-executor-cores 2 --executor-cores 2 --executor-memory 2g --driver-memory 1g --name arrow-spark --deploy-mode client /opt/***/jobs/python/test_Key.py s3a://lakehouse/bronze/keywords.parquet s3a://lakehouse/silver. Error code is: 1.; 198)
+[2024-10-05T06:23:50.158+0000] {local_task_job_runner.py:228} INFO - Task exited with return code 1
+[2024-10-05T06:23:50.177+0000] {taskinstance.py:2776} INFO - 0 downstream tasks scheduled from follow-on schedule check

@@ -1,0 +1,35 @@
+[2025-01-23T03:02:49.726+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: All_Layer.clean_movies scheduled__2025-01-22T00:00:00+00:00 [queued]>
+[2025-01-23T03:02:49.744+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: All_Layer.clean_movies scheduled__2025-01-22T00:00:00+00:00 [queued]>
+[2025-01-23T03:02:49.746+0000] {taskinstance.py:1361} INFO - Starting attempt 2 of 2
+[2025-01-23T03:02:49.781+0000] {taskinstance.py:1382} INFO - Executing <Task(SparkSubmitOperator): clean_movies> on 2025-01-22 00:00:00+00:00
+[2025-01-23T03:02:49.791+0000] {standard_task_runner.py:57} INFO - Started process 4182 to run task
+[2025-01-23T03:02:49.808+0000] {standard_task_runner.py:84} INFO - Running: ['***', 'tasks', 'run', 'All_Layer', 'clean_movies', 'scheduled__2025-01-22T00:00:00+00:00', '--job-id', '31', '--raw', '--subdir', 'DAGS_FOLDER/All_Offi.py', '--cfg-path', '/tmp/tmp7itgmbx7']
+[2025-01-23T03:02:49.816+0000] {standard_task_runner.py:85} INFO - Job 31: Subtask clean_movies
+[2025-01-23T03:02:49.960+0000] {task_command.py:416} INFO - Running <TaskInstance: All_Layer.clean_movies scheduled__2025-01-22T00:00:00+00:00 [running]> on host 73fc507ad5e4
+[2025-01-23T03:02:50.111+0000] {taskinstance.py:1662} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='All_Layer' AIRFLOW_CTX_TASK_ID='clean_movies' AIRFLOW_CTX_EXECUTION_DATE='2025-01-22T00:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='2' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-01-22T00:00:00+00:00'
+[2025-01-23T03:02:50.124+0000] {spark_submit.py:273} INFO - Could not load connection string spark-conn, defaulting to yarn
+[2025-01-23T03:02:50.127+0000] {spark_submit.py:403} INFO - Spark-Submit cmd: spark-submit --master yarn --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog --conf delta.enable-non-concurrent-writes=true --jars /opt/***/jars/hadoop-aws-3.3.4.jar,/opt/***/jars/s3-2.18.41.jar,/opt/***/jars/aws-java-sdk-1.12.367.jar,/opt/***/jars/delta-core_2.12-2.2.0.jar,/opt/***/jars/delta-storage-2.2.0.jar, --packages org.apache.hadoop:hadoop-aws:3.3.4 --num-executors 2 --total-executor-cores 2 --executor-cores 2 --executor-memory 2g --driver-memory 1g --name arrow-spark /opt/***/jobs/python/processing_movie.py s3a://lakehouse/bronze/movies.parquet s3a://lakehouse/silver/movies
+[2025-01-23T03:02:50.413+0000] {spark_submit.py:579} INFO - /home/***/.local/lib/python3.9/site-packages/pyspark/bin/load-spark-env.sh: line 68: ps: command not found
+[2025-01-23T03:02:58.082+0000] {spark_submit.py:579} INFO - Warning: Ignoring non-Spark config property: delta.enable-non-concurrent-writes
+[2025-01-23T03:02:58.419+0000] {spark_submit.py:579} INFO - Exception in thread "main" org.apache.spark.SparkException: When running with master 'yarn' either HADOOP_CONF_DIR or YARN_CONF_DIR must be set in the environment.
+[2025-01-23T03:02:58.421+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmitArguments.error(SparkSubmitArguments.scala:634)
+[2025-01-23T03:02:58.421+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmitArguments.validateSubmitArguments(SparkSubmitArguments.scala:274)
+[2025-01-23T03:02:58.422+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmitArguments.validateArguments(SparkSubmitArguments.scala:234)
+[2025-01-23T03:02:58.422+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmitArguments.<init>(SparkSubmitArguments.scala:119)
+[2025-01-23T03:02:58.423+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit$$anon$2$$anon$3.<init>(SparkSubmit.scala:1029)
+[2025-01-23T03:02:58.423+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit$$anon$2.parseArguments(SparkSubmit.scala:1029)
+[2025-01-23T03:02:58.424+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit.doSubmit(SparkSubmit.scala:85)
+[2025-01-23T03:02:58.424+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit$$anon$2.doSubmit(SparkSubmit.scala:1046)
+[2025-01-23T03:02:58.425+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit$.main(SparkSubmit.scala:1055)
+[2025-01-23T03:02:58.426+0000] {spark_submit.py:579} INFO - at org.apache.spark.deploy.SparkSubmit.main(SparkSubmit.scala)
+[2025-01-23T03:02:58.470+0000] {taskinstance.py:1937} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/providers/apache/spark/operators/spark_submit.py", line 174, in execute
+    self._hook.submit(self.application)
+  File "/home/airflow/.local/lib/python3.9/site-packages/airflow/providers/apache/spark/hooks/spark_submit.py", line 505, in submit
+    raise AirflowException(
+airflow.exceptions.AirflowException: Cannot execute: spark-submit --master yarn --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog --conf delta.enable-non-concurrent-writes=true --jars /opt/***/jars/hadoop-aws-3.3.4.jar,/opt/***/jars/s3-2.18.41.jar,/opt/***/jars/aws-java-sdk-1.12.367.jar,/opt/***/jars/delta-core_2.12-2.2.0.jar,/opt/***/jars/delta-storage-2.2.0.jar, --packages org.apache.hadoop:hadoop-aws:3.3.4 --num-executors 2 --total-executor-cores 2 --executor-cores 2 --executor-memory 2g --driver-memory 1g --name arrow-spark /opt/***/jobs/python/processing_movie.py s3a://lakehouse/bronze/movies.parquet s3a://lakehouse/silver/movies. Error code is: 1.
+[2025-01-23T03:02:58.476+0000] {taskinstance.py:1400} INFO - Marking task as FAILED. dag_id=All_Layer, task_id=clean_movies, execution_date=20250122T000000, start_date=20250123T030249, end_date=20250123T030258
+[2025-01-23T03:02:58.492+0000] {standard_task_runner.py:104} ERROR - Failed to execute job 31 for task clean_movies (Cannot execute: spark-submit --master yarn --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog --conf delta.enable-non-concurrent-writes=true --jars /opt/***/jars/hadoop-aws-3.3.4.jar,/opt/***/jars/s3-2.18.41.jar,/opt/***/jars/aws-java-sdk-1.12.367.jar,/opt/***/jars/delta-core_2.12-2.2.0.jar,/opt/***/jars/delta-storage-2.2.0.jar, --packages org.apache.hadoop:hadoop-aws:3.3.4 --num-executors 2 --total-executor-cores 2 --executor-cores 2 --executor-memory 2g --driver-memory 1g --name arrow-spark /opt/***/jobs/python/processing_movie.py s3a://lakehouse/bronze/movies.parquet s3a://lakehouse/silver/movies. Error code is: 1.; 4182)
+[2025-01-23T03:02:58.522+0000] {local_task_job_runner.py:228} INFO - Task exited with return code 1
+[2025-01-23T03:02:58.609+0000] {taskinstance.py:2778} INFO - 0 downstream tasks scheduled from follow-on schedule check

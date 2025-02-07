@@ -1,0 +1,155 @@
+[2024-10-05T16:34:54.207+0000] {taskinstance.py:1157} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: spark_processing_dag.silver_cleaned_keywords scheduled__2024-10-04T00:00:00+00:00 [queued]>
+[2024-10-05T16:34:54.215+0000] {taskinstance.py:1157} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: spark_processing_dag.silver_cleaned_keywords scheduled__2024-10-04T00:00:00+00:00 [queued]>
+[2024-10-05T16:34:54.216+0000] {taskinstance.py:1359} INFO - Starting attempt 7 of 8
+[2024-10-05T16:34:54.226+0000] {taskinstance.py:1380} INFO - Executing <Task(SparkSubmitOperator): silver_cleaned_keywords> on 2024-10-04 00:00:00+00:00
+[2024-10-05T16:34:54.231+0000] {standard_task_runner.py:57} INFO - Started process 436 to run task
+[2024-10-05T16:34:54.233+0000] {standard_task_runner.py:84} INFO - Running: ['***', 'tasks', 'run', 'spark_processing_dag', 'silver_cleaned_keywords', 'scheduled__2024-10-04T00:00:00+00:00', '--job-id', '191', '--raw', '--subdir', 'DAGS_FOLDER/sliver_layer.py', '--cfg-path', '/tmp/tmpp013akrg']
+[2024-10-05T16:34:54.236+0000] {standard_task_runner.py:85} INFO - Job 191: Subtask silver_cleaned_keywords
+[2024-10-05T16:34:54.280+0000] {task_command.py:415} INFO - Running <TaskInstance: spark_processing_dag.silver_cleaned_keywords scheduled__2024-10-04T00:00:00+00:00 [running]> on host 8cc963156206
+[2024-10-05T16:34:54.345+0000] {taskinstance.py:1660} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='spark_processing_dag' AIRFLOW_CTX_TASK_ID='silver_cleaned_keywords' AIRFLOW_CTX_EXECUTION_DATE='2024-10-04T00:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='7' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2024-10-04T00:00:00+00:00'
+[2024-10-05T16:34:54.355+0000] {base.py:73} INFO - Using connection ID 'spark-conn' for task execution.
+[2024-10-05T16:34:54.357+0000] {spark_submit.py:403} INFO - Spark-Submit cmd: spark-submit --master spark://spark-master:7077 --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog --conf spark.delta.logStore.class=org.apache.spark.sql.delta.storage.S3SingleDriverLogStore --jars /opt/***/jars/hadoop-aws-3.3.4.jar,/opt/***/jars/s3-2.18.41.jar,/opt/***/jars/aws-java-sdk-1.12.367.jar,/opt/***/jars/delta-core_2.12-2.2.0.jar,/opt/***/jars/delta-storage-2.2.0.jar --packages org.apache.hadoop:hadoop-aws:3.3.4 --num-executors 2 --total-executor-cores 2 --executor-cores 2 --executor-memory 2g --driver-memory 1g --name arrow-spark --deploy-mode client /opt/***/jobs/python/test_Key.py s3a://lakehouse/bronze/keywords.parquet s3a://lakehouse/silver
+[2024-10-05T16:34:54.430+0000] {spark_submit.py:579} INFO - /home/***/.local/lib/python3.11/site-packages/pyspark/bin/load-spark-env.sh: line 68: ps: command not found
+[2024-10-05T16:34:56.166+0000] {spark_submit.py:579} INFO - :: loading settings :: url = jar:file:/home/***/.local/lib/python3.11/site-packages/pyspark/jars/ivy-2.5.1.jar!/org/apache/ivy/core/settings/ivysettings.xml
+[2024-10-05T16:34:56.256+0000] {spark_submit.py:579} INFO - Ivy Default Cache set to: /home/***/.ivy2/cache
+[2024-10-05T16:34:56.257+0000] {spark_submit.py:579} INFO - The jars for the packages stored in: /home/***/.ivy2/jars
+[2024-10-05T16:34:56.262+0000] {spark_submit.py:579} INFO - org.apache.hadoop#hadoop-aws added as a dependency
+[2024-10-05T16:34:56.263+0000] {spark_submit.py:579} INFO - :: resolving dependencies :: org.apache.spark#spark-submit-parent-432c3447-509c-4cde-9138-eef4a4cce726;1.0
+[2024-10-05T16:34:56.264+0000] {spark_submit.py:579} INFO - confs: [default]
+[2024-10-05T16:34:56.423+0000] {spark_submit.py:579} INFO - found org.apache.hadoop#hadoop-aws;3.3.4 in central
+[2024-10-05T16:34:56.452+0000] {spark_submit.py:579} INFO - found com.amazonaws#aws-java-sdk-bundle;1.12.262 in central
+[2024-10-05T16:34:56.476+0000] {spark_submit.py:579} INFO - found org.wildfly.openssl#wildfly-openssl;1.0.7.Final in central
+[2024-10-05T16:34:56.498+0000] {spark_submit.py:579} INFO - :: resolution report :: resolve 227ms :: artifacts dl 7ms
+[2024-10-05T16:34:56.499+0000] {spark_submit.py:579} INFO - :: modules in use:
+[2024-10-05T16:34:56.500+0000] {spark_submit.py:579} INFO - com.amazonaws#aws-java-sdk-bundle;1.12.262 from central in [default]
+[2024-10-05T16:34:56.500+0000] {spark_submit.py:579} INFO - org.apache.hadoop#hadoop-aws;3.3.4 from central in [default]
+[2024-10-05T16:34:56.500+0000] {spark_submit.py:579} INFO - org.wildfly.openssl#wildfly-openssl;1.0.7.Final from central in [default]
+[2024-10-05T16:34:56.501+0000] {spark_submit.py:579} INFO - ---------------------------------------------------------------------
+[2024-10-05T16:34:56.501+0000] {spark_submit.py:579} INFO - |                  |            modules            ||   artifacts   |
+[2024-10-05T16:34:56.502+0000] {spark_submit.py:579} INFO - |       conf       | number| search|dwnlded|evicted|| number|dwnlded|
+[2024-10-05T16:34:56.502+0000] {spark_submit.py:579} INFO - ---------------------------------------------------------------------
+[2024-10-05T16:34:56.502+0000] {spark_submit.py:579} INFO - |      default     |   3   |   0   |   0   |   0   ||   3   |   0   |
+[2024-10-05T16:34:56.503+0000] {spark_submit.py:579} INFO - ---------------------------------------------------------------------
+[2024-10-05T16:34:56.504+0000] {spark_submit.py:579} INFO - :: retrieving :: org.apache.spark#spark-submit-parent-432c3447-509c-4cde-9138-eef4a4cce726
+[2024-10-05T16:34:56.505+0000] {spark_submit.py:579} INFO - confs: [default]
+[2024-10-05T16:34:56.511+0000] {spark_submit.py:579} INFO - 0 artifacts copied, 3 already retrieved (0kB/6ms)
+[2024-10-05T16:34:56.713+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:56 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+[2024-10-05T16:34:58.003+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO SparkContext: Running Spark version 3.5.1
+[2024-10-05T16:34:58.004+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO SparkContext: OS info Linux, 5.15.153.1-microsoft-standard-WSL2, amd64
+[2024-10-05T16:34:58.004+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO SparkContext: Java version 11.0.24
+[2024-10-05T16:34:58.024+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO ResourceUtils: ==============================================================
+[2024-10-05T16:34:58.025+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO ResourceUtils: No custom resources configured for spark.driver.
+[2024-10-05T16:34:58.025+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO ResourceUtils: ==============================================================
+[2024-10-05T16:34:58.026+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO SparkContext: Submitted application: CleanKeywords
+[2024-10-05T16:34:58.046+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 2, script: , vendor: , memory -> name: memory, amount: 2048, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+[2024-10-05T16:34:58.063+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO ResourceProfile: Limiting resource is cpus at 2 tasks per executor
+[2024-10-05T16:34:58.065+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO ResourceProfileManager: Added ResourceProfile id: 0
+[2024-10-05T16:34:58.120+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO SecurityManager: Changing view acls to: ***
+[2024-10-05T16:34:58.120+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO SecurityManager: Changing modify acls to: ***
+[2024-10-05T16:34:58.121+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO SecurityManager: Changing view acls groups to:
+[2024-10-05T16:34:58.122+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO SecurityManager: Changing modify acls groups to:
+[2024-10-05T16:34:58.122+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: ***; groups with view permissions: EMPTY; users with modify permissions: ***; groups with modify permissions: EMPTY
+[2024-10-05T16:34:58.319+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO Utils: Successfully started service 'sparkDriver' on port 41171.
+[2024-10-05T16:34:58.357+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO SparkEnv: Registering MapOutputTracker
+[2024-10-05T16:34:58.386+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO SparkEnv: Registering BlockManagerMaster
+[2024-10-05T16:34:58.400+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+[2024-10-05T16:34:58.401+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+[2024-10-05T16:34:58.405+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+[2024-10-05T16:34:58.424+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-8b8fb4ca-9280-440e-8db3-7dca90549c50
+[2024-10-05T16:34:58.436+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+[2024-10-05T16:34:58.451+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO SparkEnv: Registering OutputCommitCoordinator
+[2024-10-05T16:34:58.564+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+[2024-10-05T16:34:58.612+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+[2024-10-05T16:34:58.650+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO SparkContext: Added JAR file:///opt/***/jars/hadoop-aws-3.3.4.jar at spark://8cc963156206:41171/jars/hadoop-aws-3.3.4.jar with timestamp 1728146097995
+[2024-10-05T16:34:58.652+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO SparkContext: Added JAR file:///opt/***/jars/s3-2.18.41.jar at spark://8cc963156206:41171/jars/s3-2.18.41.jar with timestamp 1728146097995
+[2024-10-05T16:34:58.654+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO SparkContext: Added JAR file:///opt/***/jars/aws-java-sdk-1.12.367.jar at spark://8cc963156206:41171/jars/aws-java-sdk-1.12.367.jar with timestamp 1728146097995
+[2024-10-05T16:34:58.655+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO SparkContext: Added JAR file:///opt/***/jars/delta-core_2.12-2.2.0.jar at spark://8cc963156206:41171/jars/delta-core_2.12-2.2.0.jar with timestamp 1728146097995
+[2024-10-05T16:34:58.657+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO SparkContext: Added JAR file:///opt/***/jars/delta-storage-2.2.0.jar at spark://8cc963156206:41171/jars/delta-storage-2.2.0.jar with timestamp 1728146097995
+[2024-10-05T16:34:58.658+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO SparkContext: Added JAR file:///home/***/.ivy2/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar at spark://8cc963156206:41171/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar with timestamp 1728146097995
+[2024-10-05T16:34:58.658+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO SparkContext: Added JAR file:///home/***/.ivy2/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar at spark://8cc963156206:41171/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar with timestamp 1728146097995
+[2024-10-05T16:34:58.659+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO SparkContext: Added JAR file:///home/***/.ivy2/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar at spark://8cc963156206:41171/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar with timestamp 1728146097995
+[2024-10-05T16:34:58.661+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO SparkContext: Added file file:///home/***/.ivy2/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar at spark://8cc963156206:41171/files/org.apache.hadoop_hadoop-aws-3.3.4.jar with timestamp 1728146097995
+[2024-10-05T16:34:58.662+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO Utils: Copying /home/***/.ivy2/jars/org.apache.hadoop_hadoop-aws-3.3.4.jar to /tmp/spark-6e623c2e-98a9-44b7-86d7-ab4b352c75b9/userFiles-56395fe9-81cf-4b8e-b7ad-631950695898/org.apache.hadoop_hadoop-aws-3.3.4.jar
+[2024-10-05T16:34:58.672+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO SparkContext: Added file file:///home/***/.ivy2/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar at spark://8cc963156206:41171/files/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar with timestamp 1728146097995
+[2024-10-05T16:34:58.673+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO Utils: Copying /home/***/.ivy2/jars/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar to /tmp/spark-6e623c2e-98a9-44b7-86d7-ab4b352c75b9/userFiles-56395fe9-81cf-4b8e-b7ad-631950695898/com.amazonaws_aws-java-sdk-bundle-1.12.262.jar
+[2024-10-05T16:34:58.858+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO SparkContext: Added file file:///home/***/.ivy2/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar at spark://8cc963156206:41171/files/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar with timestamp 1728146097995
+[2024-10-05T16:34:58.858+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO Utils: Copying /home/***/.ivy2/jars/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar to /tmp/spark-6e623c2e-98a9-44b7-86d7-ab4b352c75b9/userFiles-56395fe9-81cf-4b8e-b7ad-631950695898/org.wildfly.openssl_wildfly-openssl-1.0.7.Final.jar
+[2024-10-05T16:34:58.943+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO StandaloneAppClient$ClientEndpoint: Connecting to master spark://spark-master:7077...
+[2024-10-05T16:34:58.980+0000] {spark_submit.py:579} INFO - 24/10/05 16:34:58 INFO TransportClientFactory: Successfully created connection to spark-master/172.20.0.4:7077 after 23 ms (0 ms spent in bootstraps)
+[2024-10-05T16:35:18.943+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:18 INFO StandaloneAppClient$ClientEndpoint: Connecting to master spark://spark-master:7077...
+[2024-10-05T16:35:38.945+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:38 INFO StandaloneAppClient$ClientEndpoint: Connecting to master spark://spark-master:7077...
+[2024-10-05T16:35:58.945+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:58 WARN StandaloneSchedulerBackend: Application ID is not initialized yet.
+[2024-10-05T16:35:58.945+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:58 ERROR StandaloneSchedulerBackend: Application has been killed. Reason: All masters are unresponsive! Giving up.
+[2024-10-05T16:35:58.958+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:58 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 37891.
+[2024-10-05T16:35:58.959+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:58 INFO NettyBlockTransferService: Server created on 8cc963156206:37891
+[2024-10-05T16:35:58.961+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:58 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+[2024-10-05T16:35:58.966+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:58 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, 8cc963156206, 37891, None)
+[2024-10-05T16:35:58.970+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:58 INFO BlockManagerMasterEndpoint: Registering block manager 8cc963156206:37891 with 434.4 MiB RAM, BlockManagerId(driver, 8cc963156206, 37891, None)
+[2024-10-05T16:35:58.973+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:58 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, 8cc963156206, 37891, None)
+[2024-10-05T16:35:58.974+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:58 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, 8cc963156206, 37891, None)
+[2024-10-05T16:35:59.158+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:59 INFO StandaloneSchedulerBackend: SchedulerBackend is ready for scheduling beginning after reached minRegisteredResourcesRatio: 0.0
+[2024-10-05T16:35:59.394+0000] {spark_submit.py:579} INFO - Reading data from s3a://lakehouse/bronze/keywords.parquet
+[2024-10-05T16:35:59.402+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:59 INFO SparkContext: SparkContext is stopping with exitCode 0.
+[2024-10-05T16:35:59.404+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:59 INFO SharedState: Setting hive.metastore.warehouse.dir ('null') to the value of spark.sql.warehouse.dir.
+[2024-10-05T16:35:59.416+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:59 INFO SparkUI: Stopped Spark web UI at http://8cc963156206:4040
+[2024-10-05T16:35:59.426+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:59 INFO StandaloneSchedulerBackend: Shutting down all executors
+[2024-10-05T16:35:59.431+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:59 INFO StandaloneSchedulerBackend$StandaloneDriverEndpoint: Asking each executor to shut down
+[2024-10-05T16:35:59.438+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:59 WARN StandaloneAppClient$ClientEndpoint: Drop UnregisterApplication(null) because has not yet connected to master
+[2024-10-05T16:35:59.454+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:59 INFO MapOutputTrackerMasterEndpoint: MapOutputTrackerMasterEndpoint stopped!
+[2024-10-05T16:35:59.489+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:59 INFO MemoryStore: MemoryStore cleared
+[2024-10-05T16:35:59.489+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:59 INFO BlockManager: BlockManager stopped
+[2024-10-05T16:35:59.504+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:59 INFO BlockManagerMaster: BlockManagerMaster stopped
+[2024-10-05T16:35:59.507+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:59 INFO OutputCommitCoordinator$OutputCommitCoordinatorEndpoint: OutputCommitCoordinator stopped!
+[2024-10-05T16:35:59.588+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:59 INFO SparkContext: Successfully stopped SparkContext
+[2024-10-05T16:35:59.756+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:59 WARN MetricsConfig: Cannot locate configuration: tried hadoop-metrics2-s3a-file-system.properties,hadoop-metrics2.properties
+[2024-10-05T16:35:59.774+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:59 INFO MetricsSystemImpl: Scheduled Metric snapshot period at 10 second(s).
+[2024-10-05T16:35:59.775+0000] {spark_submit.py:579} INFO - 24/10/05 16:35:59 INFO MetricsSystemImpl: s3a-file-system metrics system started
+[2024-10-05T16:36:00.572+0000] {spark_submit.py:579} INFO - 24/10/05 16:36:00 INFO SharedState: Warehouse path is 's3a://lakehouse/'.
+[2024-10-05T16:36:00.623+0000] {spark_submit.py:579} INFO - Error during cleaning process: An error occurred while calling o53.read.
+[2024-10-05T16:36:00.623+0000] {spark_submit.py:579} INFO - : java.lang.IllegalStateException: LiveListenerBus is stopped.
+[2024-10-05T16:36:00.624+0000] {spark_submit.py:579} INFO - at org.apache.spark.scheduler.LiveListenerBus.addToQueue(LiveListenerBus.scala:92)
+[2024-10-05T16:36:00.624+0000] {spark_submit.py:579} INFO - at org.apache.spark.scheduler.LiveListenerBus.addToStatusQueue(LiveListenerBus.scala:75)
+[2024-10-05T16:36:00.624+0000] {spark_submit.py:579} INFO - at org.apache.spark.sql.internal.SharedState.<init>(SharedState.scala:115)
+[2024-10-05T16:36:00.624+0000] {spark_submit.py:579} INFO - at org.apache.spark.sql.SparkSession.$anonfun$sharedState$1(SparkSession.scala:143)
+[2024-10-05T16:36:00.624+0000] {spark_submit.py:579} INFO - at scala.Option.getOrElse(Option.scala:189)
+[2024-10-05T16:36:00.625+0000] {spark_submit.py:579} INFO - at org.apache.spark.sql.SparkSession.sharedState$lzycompute(SparkSession.scala:143)
+[2024-10-05T16:36:00.625+0000] {spark_submit.py:579} INFO - at org.apache.spark.sql.SparkSession.sharedState(SparkSession.scala:142)
+[2024-10-05T16:36:00.625+0000] {spark_submit.py:579} INFO - at org.apache.spark.sql.SparkSession.$anonfun$sessionState$2(SparkSession.scala:162)
+[2024-10-05T16:36:00.625+0000] {spark_submit.py:579} INFO - at scala.Option.getOrElse(Option.scala:189)
+[2024-10-05T16:36:00.625+0000] {spark_submit.py:579} INFO - at org.apache.spark.sql.SparkSession.sessionState$lzycompute(SparkSession.scala:160)
+[2024-10-05T16:36:00.625+0000] {spark_submit.py:579} INFO - at org.apache.spark.sql.SparkSession.sessionState(SparkSession.scala:157)
+[2024-10-05T16:36:00.625+0000] {spark_submit.py:579} INFO - at org.apache.spark.sql.DataFrameReader.<init>(DataFrameReader.scala:699)
+[2024-10-05T16:36:00.626+0000] {spark_submit.py:579} INFO - at org.apache.spark.sql.SparkSession.read(SparkSession.scala:783)
+[2024-10-05T16:36:00.626+0000] {spark_submit.py:579} INFO - at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+[2024-10-05T16:36:00.626+0000] {spark_submit.py:579} INFO - at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+[2024-10-05T16:36:00.626+0000] {spark_submit.py:579} INFO - at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+[2024-10-05T16:36:00.626+0000] {spark_submit.py:579} INFO - at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+[2024-10-05T16:36:00.626+0000] {spark_submit.py:579} INFO - at py4j.reflection.MethodInvoker.invoke(MethodInvoker.java:244)
+[2024-10-05T16:36:00.627+0000] {spark_submit.py:579} INFO - at py4j.reflection.ReflectionEngine.invoke(ReflectionEngine.java:374)
+[2024-10-05T16:36:00.627+0000] {spark_submit.py:579} INFO - at py4j.Gateway.invoke(Gateway.java:282)
+[2024-10-05T16:36:00.627+0000] {spark_submit.py:579} INFO - at py4j.commands.AbstractCommand.invokeMethod(AbstractCommand.java:132)
+[2024-10-05T16:36:00.627+0000] {spark_submit.py:579} INFO - at py4j.commands.CallCommand.execute(CallCommand.java:79)
+[2024-10-05T16:36:00.627+0000] {spark_submit.py:579} INFO - at py4j.ClientServerConnection.waitForCommands(ClientServerConnection.java:182)
+[2024-10-05T16:36:00.627+0000] {spark_submit.py:579} INFO - at py4j.ClientServerConnection.run(ClientServerConnection.java:106)
+[2024-10-05T16:36:00.628+0000] {spark_submit.py:579} INFO - at java.base/java.lang.Thread.run(Thread.java:829)
+[2024-10-05T16:36:00.628+0000] {spark_submit.py:579} INFO - 
+[2024-10-05T16:36:00.628+0000] {spark_submit.py:579} INFO - 24/10/05 16:36:00 INFO SparkContext: SparkContext is stopping with exitCode 0.
+[2024-10-05T16:36:00.628+0000] {spark_submit.py:579} INFO - 24/10/05 16:36:00 INFO SparkContext: SparkContext already stopped.
+[2024-10-05T16:36:00.749+0000] {spark_submit.py:579} INFO - 24/10/05 16:36:00 INFO ShutdownHookManager: Shutdown hook called
+[2024-10-05T16:36:00.750+0000] {spark_submit.py:579} INFO - 24/10/05 16:36:00 INFO ShutdownHookManager: Deleting directory /tmp/spark-6e623c2e-98a9-44b7-86d7-ab4b352c75b9
+[2024-10-05T16:36:00.753+0000] {spark_submit.py:579} INFO - 24/10/05 16:36:00 INFO ShutdownHookManager: Deleting directory /tmp/spark-6e623c2e-98a9-44b7-86d7-ab4b352c75b9/pyspark-7c9bed0e-7069-4d47-a842-9f58e6a19718
+[2024-10-05T16:36:00.756+0000] {spark_submit.py:579} INFO - 24/10/05 16:36:00 INFO ShutdownHookManager: Deleting directory /tmp/spark-06873462-d3cb-4f21-868b-e9a4100e5ca7
+[2024-10-05T16:36:00.762+0000] {spark_submit.py:579} INFO - 24/10/05 16:36:00 INFO MetricsSystemImpl: Stopping s3a-file-system metrics system...
+[2024-10-05T16:36:00.763+0000] {spark_submit.py:579} INFO - 24/10/05 16:36:00 INFO MetricsSystemImpl: s3a-file-system metrics system stopped.
+[2024-10-05T16:36:00.763+0000] {spark_submit.py:579} INFO - 24/10/05 16:36:00 INFO MetricsSystemImpl: s3a-file-system metrics system shutdown complete.
+[2024-10-05T16:36:00.809+0000] {taskinstance.py:1935} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/providers/apache/spark/operators/spark_submit.py", line 174, in execute
+    self._hook.submit(self.application)
+  File "/home/airflow/.local/lib/python3.11/site-packages/airflow/providers/apache/spark/hooks/spark_submit.py", line 505, in submit
+    raise AirflowException(
+airflow.exceptions.AirflowException: Cannot execute: spark-submit --master spark://spark-master:7077 --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog --conf spark.delta.logStore.class=org.apache.spark.sql.delta.storage.S3SingleDriverLogStore --jars /opt/***/jars/hadoop-aws-3.3.4.jar,/opt/***/jars/s3-2.18.41.jar,/opt/***/jars/aws-java-sdk-1.12.367.jar,/opt/***/jars/delta-core_2.12-2.2.0.jar,/opt/***/jars/delta-storage-2.2.0.jar --packages org.apache.hadoop:hadoop-aws:3.3.4 --num-executors 2 --total-executor-cores 2 --executor-cores 2 --executor-memory 2g --driver-memory 1g --name arrow-spark --deploy-mode client /opt/***/jobs/python/test_Key.py s3a://lakehouse/bronze/keywords.parquet s3a://lakehouse/silver. Error code is: 1.
+[2024-10-05T16:36:00.813+0000] {taskinstance.py:1398} INFO - Marking task as UP_FOR_RETRY. dag_id=spark_processing_dag, task_id=silver_cleaned_keywords, execution_date=20241004T000000, start_date=20241005T163454, end_date=20241005T163600
+[2024-10-05T16:36:00.823+0000] {standard_task_runner.py:104} ERROR - Failed to execute job 191 for task silver_cleaned_keywords (Cannot execute: spark-submit --master spark://spark-master:7077 --conf spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension --conf spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog --conf spark.delta.logStore.class=org.apache.spark.sql.delta.storage.S3SingleDriverLogStore --jars /opt/***/jars/hadoop-aws-3.3.4.jar,/opt/***/jars/s3-2.18.41.jar,/opt/***/jars/aws-java-sdk-1.12.367.jar,/opt/***/jars/delta-core_2.12-2.2.0.jar,/opt/***/jars/delta-storage-2.2.0.jar --packages org.apache.hadoop:hadoop-aws:3.3.4 --num-executors 2 --total-executor-cores 2 --executor-cores 2 --executor-memory 2g --driver-memory 1g --name arrow-spark --deploy-mode client /opt/***/jobs/python/test_Key.py s3a://lakehouse/bronze/keywords.parquet s3a://lakehouse/silver. Error code is: 1.; 436)
+[2024-10-05T16:36:00.865+0000] {local_task_job_runner.py:228} INFO - Task exited with return code 1
+[2024-10-05T16:36:00.877+0000] {taskinstance.py:2776} INFO - 0 downstream tasks scheduled from follow-on schedule check
