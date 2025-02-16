@@ -5,7 +5,7 @@ import logging
 
 import ast
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, expr,udf
+from pyspark.sql.functions import col, expr,udf,size
 from pyspark.sql.types import StructType, StructField, StringType
 
 # Cấu hình logging
@@ -51,26 +51,16 @@ def clean_keywords(input_path, output_path):
     spark = init_spark_session()
 
     try:
-        # Read data from parquet with schema
-        logging.info(f"hahahahahahahahahhaahahahh {spark.version}")
+
         logging.info(f"Reading data from {input_path}")
         df = spark.read.format("parquet").load(input_path)
-
-        # Clean data by filtering non-null 'keywords' and removing duplicates
         logging.info("Cleaning data...")
-        df_filtered = df.filter(col("keywords").isNotNull()).dropDuplicates()
-
-        # Apply the UDF to transform keywords column
-        df_cleaned = df_filtered.withColumn("keyword_convert", clean_keywords_udf(col("keywords")))
-
-        logging.info("Data cleaned and transformed.")
-
-        # Save cleaned data to Delta Lake on MinIO
+        df = df.dropDuplicates(["id"])
+        df_filtered = df.filter((col("keywords").isNotNull()) & (col("keywords") != "[]"))
         logging.info(f"Saving cleaned data to {output_path}")
-        df_cleaned.write.format("delta").mode("overwrite").option('overwriteSchema', 'true').save(output_path)
-
+        df_filtered.write.format("delta").mode("overwrite").option('overwriteSchema', 'true').save(output_path)
         logging.info("Data cleaning and saving process completed successfully.")
-        return df_cleaned
+        return df_filtered
     except Exception as e:
         logging.error(f"Error during cleaning process: {str(e)}")
         logging.error(traceback.format_exc())

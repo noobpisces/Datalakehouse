@@ -84,7 +84,6 @@ def bronze_credits(**kwargs):
 def bronze_ratings(**kwargs):
     try:
         df = get_data_from_raw('ratings')
-        df = df(10000)
         logging.info(f"Table extracted with shape: {df.shape}")
         save_data_to_bronze(df, 'ratings')
     except Exception as e:
@@ -165,4 +164,4 @@ with DAG(
     )
 
     # Thiết lập thứ tự chạy các task
-    task_bronze_keywords >> task_bronze_movies >> task_bronze_credits >> task_bronze_ratings >> task_bronze_links >> task_bronze_review
+    task_bronze_keywords >> task_bronze_movies >> task_bronze_credits >> task_bronze_links >> task_bronze_review

@@ -58,35 +58,10 @@ def clean_credits(input_path: str, output_path: str):
         logging.info(f"Reading data from {input_path}")
         df = spark.read.format("parquet").load(input_path)
 
-        # Define schema
-        credits_schema = StructType([
-            StructField("cast", StringType(), nullable=True),
-            StructField("crew", StringType(), nullable=True),
-            StructField("id", StringType(), nullable=True)
-        ])
-
-        # Apply schema to the DataFrame
-        df = spark.createDataFrame(df.rdd, schema=credits_schema)
-
-        # Process and clean data using RDD
-        rdd = df.rdd.map(lambda row: row.asDict()) \
-            .map(lambda row: row.update({
-                'director': ''.join(
-                    [item['name'].replace(" ", "") for item in ast.literal_eval(row['crew']) if item.get('job') == 'Director']
-                ) if row['crew'] else ''
-            }) or row) \
-            .map(lambda row: row.update({
-                'cast_names': ' '.join(
-                    [item['name'].replace(" ", "") for item in ast.literal_eval(row['cast'])[:3]]
-                ) if row['cast'] else ''
-            }) or row)
-
-        # Convert RDD back to DataFrame
-        df_final = spark.createDataFrame(rdd).select('id', 'cast_names', 'director')
-
+        df_filtered = df.filter((col("cast") != "[]") & (col("crew") != "[]"))
         # Save cleaned data to Delta Lake
         logging.info(f"Saving cleaned data to {output_path}")
-        df_final.write.format("delta").mode("overwrite").option('overwriteSchema', 'true').save(output_path)
+        df_filtered.write.format("delta").save(output_path)
 
         logging.info("Data cleaning and saving process completed successfully.")
     except Exception as e:

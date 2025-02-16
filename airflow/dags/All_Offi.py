@@ -165,10 +165,6 @@ with DAG(
     python_callable = lambda: print("processing gold layer complete"),
     dag=dag
 )
-
-
-
-
     # Định nghĩa các task
     task_bronze_keywords = PythonOperator(
         task_id='bronze_keywords',
@@ -207,11 +203,6 @@ with DAG(
     )
     clean_keywords = SparkSubmitOperator(
         task_id='clean_keyword',
-        total_executor_cores='2',
-        executor_cores='2',
-        executor_memory='2g',
-        num_executors='2',
-        driver_memory='1g',
         application="/opt/airflow/jobs/python/processing_keyword.py",  # Đường dẫn đến file Python Spark
         application_args=["s3a://lakehouse/bronze/keywords.parquet", "s3a://lakehouse/silver/keywords"],  # Truyền input và output từ Airflow
         jars="/opt/airflow/jars/hadoop-aws-3.3.4.jar,"
@@ -230,11 +221,6 @@ with DAG(
 
     clean_ratings = SparkSubmitOperator(
         task_id='clean_rating',
-        total_executor_cores='2',
-        executor_cores='2',
-        executor_memory='1g',
-        num_executors='2',
-        driver_memory='1g',
         application="/opt/airflow/jobs/python/processing_rating.py",  # Đường dẫn đến file Python Spark
         application_args=["s3a://lakehouse/bronze/ratings.parquet", "s3a://lakehouse/silver/ratings"],  # Truyền input và output từ Airflow
         jars="/opt/airflow/jars/hadoop-aws-3.3.4.jar,"
@@ -252,11 +238,6 @@ with DAG(
 
     clean_review = SparkSubmitOperator(
         task_id='clean_review',
-        total_executor_cores='2',
-        executor_cores='2',
-        executor_memory='2g',
-        num_executors='2',
-        driver_memory='1g',
         application="/opt/airflow/jobs/python/processing_review.py",  # Đường dẫn đến file Python Spark
         application_args=["s3a://lakehouse/bronze/review.parquet", "s3a://lakehouse/silver/review"],  # Truyền input và output từ Airflow
         jars="/opt/airflow/jars/hadoop-aws-3.3.4.jar,"
@@ -274,11 +255,6 @@ with DAG(
 
     clean_credit = SparkSubmitOperator(
         task_id='clean_credit',
-        total_executor_cores='2',
-        executor_cores='2',
-        executor_memory='2g',
-        num_executors='2',
-        driver_memory='1g',
         application="/opt/airflow/jobs/python/processing_credit.py",  # Đường dẫn đến file Python Spark
         application_args=["s3a://lakehouse/bronze/credits.parquet", "s3a://lakehouse/silver/credit"],  # Truyền input và output từ Airflow
         jars="/opt/airflow/jars/hadoop-aws-3.3.4.jar,"
@@ -297,11 +273,6 @@ with DAG(
 
     cleaned_movies = SparkSubmitOperator(
         task_id='clean_movies',
-        total_executor_cores='2',
-        executor_cores='2',
-        executor_memory='2g',
-        num_executors='2',
-        driver_memory='1g',
         application="/opt/airflow/jobs/python/processing_movie.py",  # Đường dẫn đến file Python Spark
         application_args=["s3a://lakehouse/bronze/movies.parquet", "s3a://lakehouse/silver/movies"],  # Truyền input và output từ Airflow
         jars="/opt/airflow/jars/hadoop-aws-3.3.4.jar,"
@@ -316,42 +287,100 @@ with DAG(
             "spark.sql.catalog.spark_catalog": "org.apache.spark.sql.delta.catalog.DeltaCatalog",
             "delta.enable-non-concurrent-writes": "true" ,
         })
-    merge_data = SparkSubmitOperator(
-        task_id='Gold_Data',
-        total_executor_cores='2',
-        executor_cores='2',
-        executor_memory='2g',
-        num_executors='2',
-        driver_memory='1g',
-        application="/opt/airflow/jobs/python/merge_data.py",  # Đường dẫn đến file Python Spark
-        application_args=[
-            "s3a://lakehouse/bronze/keywords.parquet",
-            "s3a://lakehouse/bronze/movies.parquet",
-            "s3a://lakehouse/bronze/credits.parquet",
-            "s3a://lakehouse/merge_data-movies/merged_data",
-            "s3a://lakehouse/gold"
+    
 
-        ],
+    #------------------------------------------------------------------------------------------------------------------------------------
+###
+######
+######################################################################################################################################################
+###############################################################################################################################################################
+
+    dimmovie = SparkSubmitOperator(
+        task_id='dimmovie',
+        application="/opt/airflow/jobs/python/dimmovie.py",  # Đường dẫn đến file Python Spark
         jars="/opt/airflow/jars/hadoop-aws-3.3.4.jar,"
              "/opt/airflow/jars/s3-2.18.41.jar,"
              "/opt/airflow/jars/aws-java-sdk-bundle-1.12.262.jar,"
              "/opt/airflow/jars/aws-java-sdk-1.12.367.jar,"
              "/opt/airflow/jars/delta-core_2.12-2.2.0.jar,"
              "/opt/airflow/jars/delta-storage-2.2.0.jar,",  # Đường dẫn JARs cần thiết
-        conn_id="spark-conn",  # Kết nối Spark
-        conf={
-            "spark.sql.extensions": "io.delta.sql.DeltaSparkSessionExtension",
-            "spark.sql.catalog.spark_catalog": "org.apache.spark.sql.delta.catalog.DeltaCatalog",
-        }
+        conn_id="spark-conn"
+    )
+    dimkeyword = SparkSubmitOperator(
+        task_id='dimkeyword',
+        application="/opt/airflow/jobs/python/dimkeyword.py",  # Đường dẫn đến file Python Spark
+        jars="/opt/airflow/jars/hadoop-aws-3.3.4.jar,"
+             "/opt/airflow/jars/s3-2.18.41.jar,"
+             "/opt/airflow/jars/aws-java-sdk-bundle-1.12.262.jar,"
+             "/opt/airflow/jars/aws-java-sdk-1.12.367.jar,"
+             "/opt/airflow/jars/delta-core_2.12-2.2.0.jar,"
+             "/opt/airflow/jars/delta-storage-2.2.0.jar,",  # Đường dẫn JARs cần thiết
+        conn_id="spark-conn"
+    )
+    dimcrew = SparkSubmitOperator(
+        task_id='dimcrew',
+        application="/opt/airflow/jobs/python/dimcrew.py",  # Đường dẫn đến file Python Spark
+        jars="/opt/airflow/jars/hadoop-aws-3.3.4.jar,"
+             "/opt/airflow/jars/s3-2.18.41.jar,"
+             "/opt/airflow/jars/aws-java-sdk-bundle-1.12.262.jar,"
+             "/opt/airflow/jars/aws-java-sdk-1.12.367.jar,"
+             "/opt/airflow/jars/delta-core_2.12-2.2.0.jar,"
+             "/opt/airflow/jars/delta-storage-2.2.0.jar,",  # Đường dẫn JARs cần thiết
+        conn_id="spark-conn"
+    )
+    dimcast = SparkSubmitOperator(
+        task_id='dimcast',
+        application="/opt/airflow/jobs/python/dimcast.py",  # Đường dẫn đến file Python Spark
+        jars="/opt/airflow/jars/hadoop-aws-3.3.4.jar,"
+             "/opt/airflow/jars/s3-2.18.41.jar,"
+             "/opt/airflow/jars/aws-java-sdk-bundle-1.12.262.jar,"
+             "/opt/airflow/jars/aws-java-sdk-1.12.367.jar,"
+             "/opt/airflow/jars/delta-core_2.12-2.2.0.jar,"
+             "/opt/airflow/jars/delta-storage-2.2.0.jar,",  # Đường dẫn JARs cần thiết
+        conn_id="spark-conn"
+    )
+    dimdate = SparkSubmitOperator(
+        task_id='dimdate',
+        application="/opt/airflow/jobs/python/dimdate.py",  # Đường dẫn đến file Python Spark
+        jars="/opt/airflow/jars/hadoop-aws-3.3.4.jar,"
+             "/opt/airflow/jars/s3-2.18.41.jar,"
+             "/opt/airflow/jars/aws-java-sdk-bundle-1.12.262.jar,"
+             "/opt/airflow/jars/aws-java-sdk-1.12.367.jar,"
+             "/opt/airflow/jars/delta-core_2.12-2.2.0.jar,"
+             "/opt/airflow/jars/delta-storage-2.2.0.jar,",  # Đường dẫn JARs cần thiết
+        conn_id="spark-conn"
+    )
+    dimgenre = SparkSubmitOperator(
+        task_id='dimgenre',
+        application="/opt/airflow/jobs/python/dimgenre.py",  # Đường dẫn đến file Python Spark
+        jars="/opt/airflow/jars/hadoop-aws-3.3.4.jar,"
+             "/opt/airflow/jars/s3-2.18.41.jar,"
+             "/opt/airflow/jars/aws-java-sdk-bundle-1.12.262.jar,"
+             "/opt/airflow/jars/aws-java-sdk-1.12.367.jar,"
+             "/opt/airflow/jars/delta-core_2.12-2.2.0.jar,"
+             "/opt/airflow/jars/delta-storage-2.2.0.jar,",  # Đường dẫn JARs cần thiết
+        conn_id="spark-conn"
+    )
+    factmovie = SparkSubmitOperator(
+        task_id='factmovie',
+        application="/opt/airflow/jobs/python/factmovie.py",  # Đường dẫn đến file Python Spark
+        jars="/opt/airflow/jars/hadoop-aws-3.3.4.jar,"
+             "/opt/airflow/jars/s3-2.18.41.jar,"
+             "/opt/airflow/jars/aws-java-sdk-bundle-1.12.262.jar,"
+             "/opt/airflow/jars/aws-java-sdk-1.12.367.jar,"
+             "/opt/airflow/jars/delta-core_2.12-2.2.0.jar,"
+             "/opt/airflow/jars/delta-storage-2.2.0.jar,",  # Đường dẫn JARs cần thiết
+        conn_id="spark-conn"
     )
 
 
-    start>> task_bronze_credits >> complete_bronze >> clean_credit >> complete_silver>> merge_data >>complete_gold >> end
-    start>> task_bronze_keywords >> complete_bronze >> clean_keywords>> complete_silver >> merge_data >>complete_gold >> end
-    start>> task_bronze_movies >> complete_bronze>> cleaned_movies>> complete_silver >> merge_data >>complete_gold >> end
-    start>> task_bronze_ratings>> complete_bronze >> clean_ratings>> complete_silver >> merge_data >>complete_gold >> end
-    start>> task_bronze_review>> complete_bronze >> clean_review>> complete_silver >> merge_data >>complete_gold >> end
-    start>> task_bronze_links >> complete_bronze
+    # start>> task_bronze_credits >> complete_bronze >> clean_credit >> complete_silver>> dimcast >> dimcrew >> complete_gold >> end
+    # start>> task_bronze_keywords >> complete_bronze >> clean_keywords>> complete_silver >> dimkeyword>>complete_gold >> end
+    # start>> task_bronze_movies >> complete_bronze>> cleaned_movies>> complete_silver >> merge_data >>complete_gold >> end
+    # start>> task_bronze_review>> complete_bronze >> clean_review>> complete_silver >> merge_data >>complete_gold >> end
+    # start>> task_bronze_links >> complete_bronze
 
     # Thiết lập thứ tự chạy các task
-    # task_bronze_keywords >> task_bronze_movies >> task_bronze_credits >> task_bronze_ratings >> task_bronze_links >> task_bronze_review >>clean_keywords >> clean_ratings >> clean_review >> clean_credit >> cleaned_movies >> merge_data
+    task_bronze_keywords >> task_bronze_movies >> task_bronze_credits >> task_bronze_links >> \
+    task_bronze_review >>clean_keywords >>  clean_review >> clean_credit >> cleaned_movies >> \
+    dimkeyword >> dimcrew >> dimcast >> dimgenre >> dimdate >> dimmovie >> factmovie
