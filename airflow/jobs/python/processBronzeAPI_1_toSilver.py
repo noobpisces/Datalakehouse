@@ -34,7 +34,7 @@ df = df.select(
     col("revenue").cast("double").alias("revenue"),
     col("vote_average").cast("double").alias("vote_average"),
     col("vote_count").cast("double").alias("vote_count"),
-    unix_timestamp(col("release_date"), "yyyy-MM-dd").alias("date_id"),
+    date_format(col("release_date"), "yyyyMMdd").cast("integer").alias("date_id"),
     col("title"),                                                # Giữ nguyên kiểu string
     col("original_title"),                                       # Giữ nguyên kiểu string
     col("original_language").alias("language"),                  # Đổi tên trường: original_language -> language

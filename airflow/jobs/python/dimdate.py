@@ -39,7 +39,7 @@ result = df.select(
     F.when((F.dayofweek("parsed_date") >= 2) & (F.dayofweek("parsed_date") <= 6), True).otherwise(False).alias("IsWeekDay")
 )
 result = result.withColumn(
-    "DATE_ID",
+    "date_id",
     (F.col("Year") * 10000 + F.col("MonthOfYear") * 100 + F.col("DayOfMonth"))
 )
 result.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/dim_date")

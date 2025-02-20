@@ -10,7 +10,7 @@ from pyspark.sql.functions import (
     dayofweek, dayofmonth, dayofyear, weekofyear,
     month, quarter, year, when, unix_timestamp
 )
-from pyspark.sql import functions as F
+from delta.tables import DeltaTable
 
 spark = SparkSession.builder \
     .appName("MinIO with Delta Lake") \
@@ -41,12 +41,25 @@ fact_movie_df = df.select(
     col("date_id")
 ).dropDuplicates(["id"])
 
-fact_movie_query = fact_movie_df.writeStream \
-    .format("delta") \
-    .outputMode("append") \
-    .option("checkpointLocation", "s3a://lakehouse/check/fact_movies") \
-    .option("path", "s3a://lakehouse/gold/fact_movies") \
-    .start()
+try:
+
+    fact_movie = DeltaTable.forPath(spark, "s3a://lakehouse/gold/fact_movies")
+
+    fact_movie.alias("target").merge(
+        fact_movie_df.alias("source"),
+        "target.id = source.id"
+    ).whenNotMatchedInsertAll().execute()
+except :
+    fact_movie_df.write.format("delta").mode("overwrite").save("s3a://lakehouse/gold/fact_movies")
+
+
+
+# fact_movie_query = fact_movie_df.writeStream \
+#     .format("delta") \
+#     .outputMode("append") \
+#     .option("checkpointLocation", "s3a://lakehouse/check/fact_movies") \
+#     .option("path", "s3a://lakehouse/gold/fact_movies") \
+#     .start()
 
 # --------------------------------------------------
 # DIMENSION TABLE: dim_movie
@@ -65,12 +78,21 @@ dimmovie_df = df.select(
     col("homepage")                                              # Giữ nguyên kiểu string
 ).dropDuplicates(["id"])
 
-dimmovie_query = dimmovie_df.writeStream \
-    .format("delta") \
-    .outputMode("append") \
-    .option("checkpointLocation", "s3a://lakehouse/check/dim_movie") \
-    .option("path", "s3a://lakehouse/gold/dim_movie") \
-    .start()
+
+try:
+    dimmovie = DeltaTable.forPath(spark, "s3a://lakehouse/check/dim_movie")
+    dimmovie.alias("target").merge(
+        dimmovie_df.alias("source"),
+        "target.id = source.id"
+    ).whenNotMatchedInsertAll().execute()
+except:
+    dimmovie_df.write.format("delta").mode("overwrite").save("s3a://lakehouse/gold/dim_movie")
+# dimmovie_query = dimmovie_df.writeStream \
+#     .format("delta") \
+#     .outputMode("append") \
+#     .option("checkpointLocation", "s3a://lakehouse/check/dim_movie") \
+#     .option("path", "s3a://lakehouse/gold/dim_movie") \
+#     .start()
 
 # --------------------------------------------------
 # DIMENSION TABLE: dim_date
@@ -91,12 +113,21 @@ dimdate_df = df.withColumn("release_date", to_date(col("release_date"), "yyyy-MM
         col("date_id")
     ).dropDuplicates(["date_id"])
 
-dim_date_query = dimdate_df.writeStream \
-    .format("delta") \
-    .outputMode("append") \
-    .option("checkpointLocation", "s3a://lakehouse/check/dim_date") \
-    .option("path", "s3a://lakehouse/gold/dim_date") \
-    .start()
+try:
+    dimdate = DeltaTable.forPath(spark, "s3a://lakehouse/check/dim_date")
+    dimdate.alias("target").merge(
+        dimdate_df.alias("source"),
+        "target.date_id = source.date_id"
+    ).whenNotMatchedInsertAll().execute()
+except:
+    dimdate_df.write.format("delta").mode("overwrite").save("s3a://lakehouse/gold/dim_date")
+
+# dim_date_query = dimdate_df.writeStream \
+#     .format("delta") \
+#     .outputMode("append") \
+#     .option("checkpointLocation", "s3a://lakehouse/check/dim_date") \
+#     .option("path", "s3a://lakehouse/gold/dim_date") \
+#     .start()
 
 # --------------------------------------------------
 # DIMENSION TABLE: dim_genre
@@ -108,12 +139,21 @@ dim_genre_df = df.select(
     col("genre.name").alias("name")
 ).dropDuplicates(["id"])
 
-dim_genre_query = dim_genre_df.writeStream \
-    .format("delta") \
-    .outputMode("append") \
-    .option("checkpointLocation", "s3a://lakehouse/check/dim_genre") \
-    .option("path", "s3a://lakehouse/gold/dim_genre") \
-    .start()
+try:
+    dim_genre = DeltaTable.forPath(spark, "s3a://lakehouse/gold/dim_genre")
+    dim_genre.alias("target").merge(
+        dim_genre_df.alias("source"),
+        "target.id = source.id"
+    ).whenNotMatchedInsertAll().execute()
+except:
+    dim_genre_df.write.format("delta").mode("overwrite").save("s3a://lakehouse/gold/dim_genre")
+
+# dim_genre_query = dim_genre_df.writeStream \
+#     .format("delta") \
+#     .outputMode("append") \
+#     .option("checkpointLocation", "s3a://lakehouse/check/dim_genre") \
+#     .option("path", "s3a://lakehouse/gold/dim_genre") \
+#     .start()
 
 # --------------------------------------------------
 # BRIDGE TABLE: movie_genres
@@ -126,9 +166,18 @@ movie_genre_df = df.select(
     col("movie_id").alias("id")
 )
 
-movie_genres_query = movie_genre_df.writeStream \
-    .format("delta") \
-    .outputMode("append") \
-    .option("checkpointLocation", "s3a://lakehouse/check/movie_genres") \
-    .option("path", "s3a://lakehouse/gold/movie_genres") \
-    .start()
+try:
+    movie_genre = DeltaTable.forPath(spark, "s3a://lakehouse/gold/movie_genre")
+    movie_genre.alias("target").merge(
+        movie_genre_df.alias("source"),
+        "target.id = source.id"
+    ).whenNotMatchedInsertAll().execute()
+except:
+    movie_genre_df.write.format("delta").mode("overwrite").save("s3a://lakehouse/gold/movie_genres")
+
+# movie_genres_query = movie_genre_df.writeStream \
+#     .format("delta") \
+#     .outputMode("append") \
+#     .option("checkpointLocation", "s3a://lakehouse/check/movie_genres") \
+#     .option("path", "s3a://lakehouse/gold/movie_genres") \
+#     .start()

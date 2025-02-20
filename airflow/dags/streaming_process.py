@@ -17,7 +17,7 @@ with DAG(
 ) as dag:
     spark_task = SparkSubmitOperator(
         task_id='streaming_process',
-        application='/opt/airflow/jobs/python/processingAPI_1_toBronze.py.py',  # Lưu ý: cần tách hàm okok() thành file riêng
+        application='/opt/airflow/jobs/python/processingAPI_1_toBronze.py',  # Lưu ý: cần tách hàm okok() thành file riêng
         jars = "/opt/airflow/jars/hadoop-aws-3.3.4.jar,"
              "/opt/airflow/jars/s3-2.18.41.jar,"
              "/opt/airflow/jars/aws-java-sdk-bundle-1.12.262.jar,"
