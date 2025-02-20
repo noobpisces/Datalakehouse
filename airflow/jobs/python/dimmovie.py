@@ -5,7 +5,7 @@ import logging
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import  explode,col, expr,when,to_date, sum, from_json,size,length
 from pyspark.sql.types import  ArrayType,StructType, StructField, BooleanType, StringType, IntegerType, DateType, FloatType,DoubleType, LongType
-
+from delta.tables import DeltaTable
 from pyspark.sql import functions as F
 
 spark = SparkSession.builder \
@@ -28,4 +28,13 @@ df = df.select(
     "title", "original_title", col("spoken_languages").alias("language"), "overview", 
     "runtime", "tagline", "status", "homepage"
 )
-df.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/dim_movie")
+
+
+try:
+    dimmovie = DeltaTable.forPath(spark, "s3a://lakehouse/gold/dim_movie")
+    dimmovie.alias("target").merge(
+        df.alias("source"),
+        "target.id = source.id"
+    ).whenNotMatchedInsertAll().execute()
+except:
+    df.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/dim_movie")

@@ -5,7 +5,7 @@ import logging
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import  explode,col, expr,when,to_date, sum, from_json,size,length
 from pyspark.sql.types import  ArrayType,StructType, StructField, BooleanType, StringType, IntegerType, DateType, FloatType,DoubleType, LongType
-
+from delta.tables import DeltaTable
 from pyspark.sql import functions as F
 
 spark = SparkSession.builder \
@@ -42,4 +42,13 @@ result = result.withColumn(
     "date_id",
     (F.col("Year") * 10000 + F.col("MonthOfYear") * 100 + F.col("DayOfMonth"))
 )
-result.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/dim_date")
+
+try:
+    dimdate = DeltaTable.forPath(spark, "s3a://lakehouse/gold/dim_date")
+    dimdate.alias("target").merge(
+        result.alias("source"),
+        "target.date_id = source.date_id"
+    ).whenNotMatchedInsertAll().execute()
+except:
+    result.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/dim_date")
+

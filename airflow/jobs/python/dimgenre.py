@@ -5,7 +5,7 @@ import logging
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import  explode,col, expr,when,to_date, sum, from_json,size,length
 from pyspark.sql.types import  ArrayType,StructType, StructField, BooleanType, StringType, IntegerType, DateType, FloatType,DoubleType, LongType
-
+from delta.tables import DeltaTable
 from pyspark.sql import functions as F
 
 spark = SparkSession.builder \
@@ -40,5 +40,22 @@ df_selected_Bridge = df_exploded.select(
     col("genres.id").alias("genres_id"),
     col("id").cast("Integer")
 )
-df_selected_Dim.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/dim_genre")
-df_selected_Bridge.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/movie_genre")
+
+try:
+    dim_genre = DeltaTable.forPath(spark, "s3a://lakehouse/gold/dim_genre")
+    dim_genre.alias("target").merge(
+        df_selected_Dim.alias("source"),
+        "target.id = source.id"
+    ).whenNotMatchedInsertAll().execute()
+except:
+    df_selected_Dim.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/dim_genre")
+try:
+    movie_genre = DeltaTable.forPath(spark, "s3a://lakehouse/gold/movie_genre")
+    movie_genre.alias("target").merge(
+        df_selected_Bridge.alias("source"),
+        "target.id = source.id AND target.genres_id = source.genres_id"
+    ).whenNotMatchedInsertAll().execute()
+except:
+    df_selected_Bridge.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/movie_genre")
+
+

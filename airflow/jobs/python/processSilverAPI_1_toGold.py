@@ -80,7 +80,7 @@ dimmovie_df = df.select(
 
 
 try:
-    dimmovie = DeltaTable.forPath(spark, "s3a://lakehouse/check/dim_movie")
+    dimmovie = DeltaTable.forPath(spark, "s3a://lakehouse/gold/dim_movie")
     dimmovie.alias("target").merge(
         dimmovie_df.alias("source"),
         "target.id = source.id"
@@ -114,7 +114,7 @@ dimdate_df = df.withColumn("release_date", to_date(col("release_date"), "yyyy-MM
     ).dropDuplicates(["date_id"])
 
 try:
-    dimdate = DeltaTable.forPath(spark, "s3a://lakehouse/check/dim_date")
+    dimdate = DeltaTable.forPath(spark, "s3a://lakehouse/gold/dim_date")
     dimdate.alias("target").merge(
         dimdate_df.alias("source"),
         "target.date_id = source.date_id"
@@ -170,7 +170,7 @@ try:
     movie_genre = DeltaTable.forPath(spark, "s3a://lakehouse/gold/movie_genre")
     movie_genre.alias("target").merge(
         movie_genre_df.alias("source"),
-        "target.id = source.id"
+        "target.id = source.id AND target.genres_id = source.genres_id"
     ).whenNotMatchedInsertAll().execute()
 except:
     movie_genre_df.write.format("delta").mode("overwrite").save("s3a://lakehouse/gold/movie_genres")

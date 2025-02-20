@@ -7,7 +7,7 @@ from pyspark.sql.functions import  explode,col, expr,when,to_date, sum, from_jso
 from pyspark.sql.types import  ArrayType,StructType, StructField, BooleanType, StringType, IntegerType, DateType, FloatType,DoubleType, LongType
 
 from pyspark.sql import functions as F
-
+from delta.tables import DeltaTable
 spark = SparkSession.builder \
     .appName("MinIO with Delta Lake") \
     .config("spark.hadoop.fs.s3a.endpoint", "http://minio:9000") \
@@ -53,6 +53,20 @@ df_selected_Bridge = df_exploded.select(
     col("cast.character"),
     col("id").alias("movie_id")
 )
-
-df_selected_Dim.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/dim_cast")
-df_selected_Bridge.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/movie_cast")
+try:
+    dim_cast = DeltaTable.forPath(spark, "s3a://lakehouse/gold/dim_cast")
+    dim_cast.alias("target").merge(
+        df_selected_Dim.alias("source"),
+        "target.id = source.id"
+    ).whenNotMatchedInsertAll().execute()
+except:
+    df_selected_Dim.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/dim_cast")
+    
+try:
+    movie_cast = DeltaTable.forPath(spark, "s3a://lakehouse/gold/movie_cast")
+    movie_cast.alias("target").merge(
+        df_selected_Bridge.alias("source"),
+        "target.movie_id = source.movie_id AND target.cast_id = source.cast_id AND target.character = target.character"
+    ).whenNotMatchedInsertAll().execute()
+except:
+    df_selected_Bridge.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/movie_cast")

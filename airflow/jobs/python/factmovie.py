@@ -5,7 +5,7 @@ import logging
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import  explode,col, expr,when,to_date, sum, from_json,size,length
 from pyspark.sql.types import  ArrayType,StructType, StructField, BooleanType, StringType, IntegerType, DateType, FloatType,DoubleType, LongType
-
+from delta.tables import DeltaTable
 from pyspark.sql import functions as F
 
 spark = SparkSession.builder \
@@ -38,4 +38,13 @@ df_fact = df_fact.select(
     col("vote_count"),
     col("date_id")
 )
-df_fact.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/fact_movies")
+try:
+
+    fact_movie = DeltaTable.forPath(spark, "s3a://lakehouse/gold/fact_movies")
+
+    fact_movie.alias("target").merge(
+        df_fact.alias("source"),
+        "target.id = source.id"
+    ).whenNotMatchedInsertAll().execute()
+except :
+    df_fact.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/fact_movies")

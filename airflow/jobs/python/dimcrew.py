@@ -5,7 +5,7 @@ import logging
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import  explode,col, expr,when,to_date, sum, from_json,size,length
 from pyspark.sql.types import  ArrayType,StructType, StructField, BooleanType, StringType, IntegerType, DateType, FloatType,DoubleType, LongType
-
+from delta.tables import DeltaTable
 from pyspark.sql import functions as F
 
 spark = SparkSession.builder \
@@ -28,7 +28,7 @@ crew_schema = ArrayType(
         StructField("credit_id", StringType(), True),
         StructField("department", StringType(), True),
         StructField("gender", IntegerType(), True),
-        StructField("id", LongType(), True),
+        StructField("id", IntegerType(), True),
         StructField("job", StringType(), True),
         StructField("name", StringType(), True),
         StructField("profile_path", StringType(), True)
@@ -48,12 +48,28 @@ df_selected_Dim = df_exploded.select(
     col("crew.job"),
     col("crew.department")
 )
-df_selected_Brigde = df_exploded.select(
+df_selected_Bridge = df_exploded.select(
     col("crew.id").alias("crew_id"),
     col("crew.job"),
     col("crew.department"),
     col("id").alias("movie_id")
 )
-df_selected_Dim.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/dim_crew")
-df_selected_Brigde.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/movie_crew")
 
+
+try:
+    dim_crew = DeltaTable.forPath(spark, "s3a://lakehouse/gold/dim_crew")
+    dim_crew.alias("target").merge(
+        df_selected_Dim.alias("source"),
+        "target.id = source.id"
+    ).whenNotMatchedInsertAll().execute()
+except:
+    df_selected_Dim.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/dim_crew")
+    
+try:
+    movie_crew = DeltaTable.forPath(spark, "s3a://lakehouse/gold/movie_crew")
+    movie_crew.alias("target").merge(
+        df_selected_Bridge.alias("source"),
+        "target.movie_id = source.movie_id AND target.crew_id = source.crew_id AND target.job = target.job AND target.department = target.department"
+    ).whenNotMatchedInsertAll().execute()
+except:
+    df_selected_Bridge.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/movie_crew")
