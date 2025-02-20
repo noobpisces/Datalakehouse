@@ -15,4 +15,4 @@ new_inserts_df = cdf_df.filter(col("_change_type") == "insert")
 # Sau đó, thực hiện các xử lý (ví dụ ghi vào bảng Gold)
 new_inserts_df.write.format("delta") \
     .mode("append") \
-    .save("s3a://lakehouse/gold/dim_date")
+    .save("s3a://lakehouse/gold/dim_date")ơ-

@@ -23,9 +23,8 @@ spark = SparkSession.builder \
     .getOrCreate()
 
 df = spark.read.format("delta").load("s3a://lakehouse/silver/movies")
-df = df.withColumn("id", col("id").cast(LongType()))
 df = df.select(
-    "id",  
+    col("id").cast("integer"),  
     "title", "original_title", col("spoken_languages").alias("language"), "overview", 
     "runtime", "tagline", "status", "homepage"
 )

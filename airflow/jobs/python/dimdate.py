@@ -40,6 +40,6 @@ result = df.select(
 )
 result = result.withColumn(
     "DATE_ID",
-    (F.col("Year") * 10000 + F.col("MonthOfYear") * 100 + F.col("DayOfMonth")).cast("long")
+    (F.col("Year") * 10000 + F.col("MonthOfYear") * 100 + F.col("DayOfMonth"))
 )
 result.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/dim_date")

@@ -36,16 +36,6 @@ def init_spark_session():
         sys.exit(1)
 
 
-def parse_and_clean_keywords(keywords):
-    try:
-        keyword_list = ast.literal_eval(keywords)  # Convert string to list of dicts
-        return ' '.join(item['name'].replace(" ", "") for item in keyword_list)
-    except Exception as e:
-        logging.error(f"Failed to parse keywords: {keywords}, error: {e}")
-        return None
-
-# Register the UDF
-clean_keywords_udf = udf(parse_and_clean_keywords, StringType())
 
 def clean_keywords(input_path, output_path):
     spark = init_spark_session()

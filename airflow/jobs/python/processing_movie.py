@@ -44,7 +44,7 @@ def clean_movies(input_path, output_path):
         # Read data from Parquet
         logging.info(f"Reading data from {input_path}")
         df = spark.read.format("parquet").load(input_path)
-
+        
         df = df.filter(
                                 (col("budget") != "0") &            # loại bỏ dòng có budget là "0" (kiểu string)
                                 (col("id").isNotNull()) &           # loại bỏ dòng có id là null

@@ -30,7 +30,7 @@ cast_schema = ArrayType(
         StructField("character", StringType(), True),
         StructField("credit_id", StringType(), True),
         StructField("gender", IntegerType(), True),
-        StructField("id", LongType(), True),
+        StructField("id", IntegerType(), True),
         StructField("name", StringType(), True),
         StructField("order", IntegerType(), True),
         StructField("profile_path", StringType(), True)

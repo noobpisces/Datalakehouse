@@ -30,7 +30,7 @@ df_fact = df.withColumn(
 )
 
 df_fact = df_fact.select(
-    col("id").cast("Integer"),
+    col("id").cast("integer"),
     col("budget").cast("integer"),
     col("popularity").cast("double"),
     col("revenue"),
