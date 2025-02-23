@@ -3,15 +3,17 @@ import sys
 import traceback
 import logging
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import  explode,col, expr,when,to_date, sum, from_json,size,length
+from pyspark.sql.functions import  explode,col, expr,when,to_date, sum, from_json,size,length, lit, to_timestamp,current_timestamp, max
 from pyspark.sql.types import  ArrayType,StructType, StructField, BooleanType, StringType, IntegerType, DateType, FloatType,DoubleType, LongType
 from pyspark.sql.functions import (
     col, from_json, explode, to_date, date_format,
     dayofweek, dayofmonth, dayofyear, weekofyear,
     month, quarter, year, when, unix_timestamp
 )
+from delta.tables import DeltaTable
 from pyspark.sql import functions as F
 
+from datetime import datetime, timedelta
 spark = SparkSession.builder \
     .appName("MinIO with Delta Lake") \
     .config("spark.hadoop.fs.s3a.endpoint", "http://minio:9000") \
@@ -44,18 +46,57 @@ df = df.select(
     col("status"),                                               # Giữ nguyên kiểu string
     col("homepage"),
     col("genres"),
-    col("release_date")
+    col("release_date"),
+    col("read_time")
 )
-df = df.filter(
-                                (col("budget") != 0) &            # loại bỏ dòng có budget là "0" (kiểu string)
-                                (col("id") != 0) &           # loại bỏ dòng có id là null
-                                (col("revenue") != 0) &             # loại bỏ dòng có revenue bằng 0
-                                (col("vote_average") != 0) &        # loại bỏ dòng có vote_average bằng 0
-                                (col("vote_count") != 0) &          # loại bỏ dòng có vote_count bằng 0
-                                (col("popularity") != 0) &        # loại bỏ dòng có popularity là "0" (kiểu string)
-                                (col("date_id") != 0) & # loại bỏ dòng có release_date là null
-                                (col("runtime") != 0)               # loại bỏ dòng có runtime bằng 0
-                            )
 
 
-df.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/silver/Silver_API_1")
+try:
+    readTime = spark.read.format("delta").load("s3a://lakehouse/ReadTime")
+except:
+    spark.sql("""
+CREATE TABLE IF NOT EXISTS delta.`s3a://your-bucket/processing_state` (
+    task_id STRING,
+    last_read_time TIMESTAMP
+) USING DELTA
+""")
+    spark.sql("""
+    INSERT INTO delta.`s3a://lakehouse/ReadTime`
+    VALUES ('BatchApi_Process', '1970-01-01 00:00:00')
+    """)
+    readTime = spark.read.format("delta").load("s3a://lakehouse/ReadTime")
+
+result = readTime.filter(f"task_id = 'BatchApi_Process'").select("last_read_time").collect()
+last_read_time = result[0][0]
+
+# last_read_time = Variable.get("last_read_time", default_var="1970-01-01T00:00:00")
+# last_read_time_ts = to_timestamp(lit(last_read_time), "yyyy-MM-dd HH:mm:ss")
+
+# df = df.filter(
+#                                 (col("budget") != 0) &            # loại bỏ dòng có budget là "0" (kiểu string)
+#                                 (col("id") != 0) &           # loại bỏ dòng có id là null
+#                                 (col("revenue") != 0) &             # loại bỏ dòng có revenue bằng 0
+#                                 (col("vote_average") != 0) &        # loại bỏ dòng có vote_average bằng 0
+#                                 (col("vote_count") != 0) &          # loại bỏ dòng có vote_count bằng 0
+#                                 (col("popularity") != 0) &        # loại bỏ dòng có popularity là "0" (kiểu string)
+#                                 (col("date_id") != 0) & # loại bỏ dòng có release_date là null
+#                                 (col("runtime") != 0) &               # loại bỏ dòng có runtime bằng 0
+#                                 (col("read_time") > last_read_time_ts)
+#                             )
+# df = df.filter(
+#                                 (col("read_time") >= last_read_time_ts)
+#                             )
+df = df.filter(f"read_time > '{last_read_time}'")
+# last_read_time = Variable.get("last_read_time", default_var="1970-01-01T00:00:00")
+
+# # Chuyển đổi thành kiểu timestamp nếu cần
+# filtered_df = df.filter(col("read_time") > lit(last_read_time).cast("timestamp"))
+
+try:
+    tb = DeltaTable.forPath(spark, "s3a://lakehouse/silver/Silver_API_1")
+    tb.alias("target").merge(
+        df.alias("source"),
+        "target.id = source.id"
+    ).whenNotMatchedInsertAll().execute()
+except:
+    df.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/silver/Silver_API_1")

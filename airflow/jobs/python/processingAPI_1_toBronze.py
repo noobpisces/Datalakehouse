@@ -3,7 +3,7 @@ from pyspark.sql.types import StructType, StructField, StringType, IntegerType, 
 from pyspark.sql.functions import (
     col, from_json, explode, to_date, date_format,
     dayofweek, dayofmonth, dayofyear, weekofyear,
-    month, quarter, year, when, unix_timestamp
+    month, quarter, year, when, unix_timestamp,current_timestamp
 )
 
 # Tạo Spark Session
@@ -57,8 +57,10 @@ json_df = kafka_df.selectExpr("CAST(value AS STRING)")
 parsed_df = json_df.withColumn("data", from_json(col("value"), schema)).select("data.*")
 
 # Ép release_date sang DateType
-parsed_df = parsed_df.withColumn("release_date", to_date(col("release_date"), "yyyy-MM-dd"))
-
+# parsed_df = parsed_df.withColumn("release_date", to_date(col("release_date"), "yyyy-MM-dd"))
+parsed_df = parsed_df.withColumn("release_date", to_date(col("release_date"), "yyyy-MM-dd")) \
+                    .withColumn("read_time", date_format("read_timestamp", "yyyy-MM-dd HH:mm:ss"))
+                    #  .withColumn("read_time", current_timestamp())
 #--------------------------------------
 # Broze DATA
 #---------------------------------------

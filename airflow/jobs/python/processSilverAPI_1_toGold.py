@@ -3,15 +3,16 @@ import sys
 import traceback
 import logging
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import  explode,col, expr,when,to_date, sum, from_json,size,length
+from pyspark.sql.functions import  explode,col, expr,when,to_date, sum, from_json,size,length,  lit, to_timestamp
 from pyspark.sql.types import  ArrayType,StructType, StructField, BooleanType, StringType, IntegerType, DateType, FloatType,DoubleType, LongType
 from pyspark.sql.functions import (
     col, from_json, explode, to_date, date_format,
     dayofweek, dayofmonth, dayofyear, weekofyear,
-    month, quarter, year, when, unix_timestamp
+    month, quarter, year, when, unix_timestamp,current_timestamp, max
 )
 from delta.tables import DeltaTable
-
+from airflow.models import Variable
+from datetime import datetime, timedelta
 spark = SparkSession.builder \
     .appName("MinIO with Delta Lake") \
     .config("spark.hadoop.fs.s3a.endpoint", "http://minio:9000") \
@@ -27,7 +28,27 @@ spark = SparkSession.builder \
     .getOrCreate()
 
 df = spark.read.format("delta").load("s3a://lakehouse/silver/Silver_API_1")
+# last_read_time = Variable.get("last_read_time_SG", default_var="1970-01-01T00:00:00")
+# last_read_time_ts = to_timestamp(lit(last_read_time), "yyyy-MM-dd HH:mm:ss")
+try:
+    readTime = spark.read.format("delta").load("s3a://lakehouse/ReadTime")
+except:
+    spark.sql("""
+CREATE TABLE IF NOT EXISTS delta.`s3a://your-bucket/processing_state` (
+    task_id STRING,
+    last_read_time TIMESTAMP
+) USING DELTA
+""")
+    spark.sql("""
+    INSERT INTO delta.`s3a://lakehouse/ReadTime`
+    VALUES ('BatchApi_Process', '1970-01-01 00:00:00')
+    """)
+    readTime = spark.read.format("delta").load("s3a://lakehouse/ReadTime")
 
+result = readTime.filter(f"task_id = 'BatchApi_Process'").select("last_read_time").collect()
+last_read_time = result[0][0]
+
+df = df.filter(f"read_time > '{last_read_time}'")
 # --------------------------------------------------
 # FACT TABLE: fact_movie
 # --------------------------------------------------
@@ -54,12 +75,6 @@ except :
 
 
 
-# fact_movie_query = fact_movie_df.writeStream \
-#     .format("delta") \
-#     .outputMode("append") \
-#     .option("checkpointLocation", "s3a://lakehouse/check/fact_movies") \
-#     .option("path", "s3a://lakehouse/gold/fact_movies") \
-#     .start()
 
 # --------------------------------------------------
 # DIMENSION TABLE: dim_movie
@@ -70,9 +85,9 @@ dimmovie_df = df.select(
     col("id"),                        # Ép sang long
     col("title"),                                                # Giữ nguyên kiểu string
     col("original_title"),                                       # Giữ nguyên kiểu string
-    col("original_language").alias("language"),                  # Đổi tên trường: original_language -> language
+    col("language"),                  # Đổi tên trường: original_language -> language
     col("overview"),                                             # Giữ nguyên kiểu string
-    col("runtime").cast("double").alias("runtime"),              # Ép về double
+    col("runtime"),              # Ép về double
     col("tagline"),                                              # Giữ nguyên kiểu string
     col("status"),                                               # Giữ nguyên kiểu string
     col("homepage")                                              # Giữ nguyên kiểu string
@@ -87,12 +102,6 @@ try:
     ).whenNotMatchedInsertAll().execute()
 except:
     dimmovie_df.write.format("delta").mode("overwrite").save("s3a://lakehouse/gold/dim_movie")
-# dimmovie_query = dimmovie_df.writeStream \
-#     .format("delta") \
-#     .outputMode("append") \
-#     .option("checkpointLocation", "s3a://lakehouse/check/dim_movie") \
-#     .option("path", "s3a://lakehouse/gold/dim_movie") \
-#     .start()
 
 # --------------------------------------------------
 # DIMENSION TABLE: dim_date
@@ -122,12 +131,6 @@ try:
 except:
     dimdate_df.write.format("delta").mode("overwrite").save("s3a://lakehouse/gold/dim_date")
 
-# dim_date_query = dimdate_df.writeStream \
-#     .format("delta") \
-#     .outputMode("append") \
-#     .option("checkpointLocation", "s3a://lakehouse/check/dim_date") \
-#     .option("path", "s3a://lakehouse/gold/dim_date") \
-#     .start()
 
 # --------------------------------------------------
 # DIMENSION TABLE: dim_genre
@@ -148,12 +151,6 @@ try:
 except:
     dim_genre_df.write.format("delta").mode("overwrite").save("s3a://lakehouse/gold/dim_genre")
 
-# dim_genre_query = dim_genre_df.writeStream \
-#     .format("delta") \
-#     .outputMode("append") \
-#     .option("checkpointLocation", "s3a://lakehouse/check/dim_genre") \
-#     .option("path", "s3a://lakehouse/gold/dim_genre") \
-#     .start()
 
 # --------------------------------------------------
 # BRIDGE TABLE: movie_genres
@@ -174,10 +171,17 @@ try:
     ).whenNotMatchedInsertAll().execute()
 except:
     movie_genre_df.write.format("delta").mode("overwrite").save("s3a://lakehouse/gold/movie_genres")
+    
+max_read_time_row = df.agg(max("read_time")).collect()
+max_read_time = max_read_time_row[0]["max(read_time)"] if max_read_time_row else None
 
-# movie_genres_query = movie_genre_df.writeStream \
-#     .format("delta") \
-#     .outputMode("append") \
-#     .option("checkpointLocation", "s3a://lakehouse/check/movie_genres") \
-#     .option("path", "s3a://lakehouse/gold/movie_genres") \
-#     .start()
+
+readTime = spark.read.format("delta").load("s3a://lakehouse/ReadTime")
+    
+    # Cập nhật hoặc chèn bản ghi mới
+updated_df = readTime.filter(f"task_id != 'BatchApi_Process'").union(
+    spark.createDataFrame([("BatchApi_Process", max_read_time)], ["task_id", "last_read_time"])
+)
+
+# Ghi đè Delta Table
+updated_df.write.format("delta").mode("overwrite").save("s3a://lakehouse/ReadTime")
