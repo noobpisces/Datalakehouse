@@ -43,7 +43,6 @@ df_selected_Dim = df_exploded.select(
     col("crew.name"),
     col("crew.gender"),
     col("crew.profile_path"),
-    col("crew.credit_id"),
     col("crew.id"),
     col("crew.job"),
     col("crew.department")

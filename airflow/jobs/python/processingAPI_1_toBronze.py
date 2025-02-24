@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DoubleType, ArrayType, DateType
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType, DoubleType, ArrayType, DateType, BooleanType
 from pyspark.sql.functions import (
     col, from_json, explode, to_date, date_format,
     dayofweek, dayofmonth, dayofyear, weekofyear,
@@ -22,7 +22,7 @@ spark = SparkSession.builder \
     .getOrCreate()
 
 # Định nghĩa schema cho dữ liệu JSON (runtime được định nghĩa là DoubleType)
-schema = StructType([
+schema_movie = StructType([
     StructField("id", IntegerType(), True),
     StructField("original_title", StringType(), True),
     StructField("title", StringType(), True),
@@ -43,52 +43,103 @@ schema = StructType([
         StructField("name", StringType(), True)
     ])), True)
 ])
-
+schema_crew = StructType([
+    StructField("id", IntegerType(), True),
+    StructField("cast", ArrayType(
+        StructType([
+            StructField("adult", BooleanType(), True),
+            StructField("gender", IntegerType(), True),
+            StructField("id", IntegerType(), True),
+            StructField("known_for_department", StringType(), True),
+            StructField("name", StringType(), True),
+            StructField("original_name", StringType(), True),
+            StructField("popularity", DoubleType(), True),
+            StructField("profile_path", StringType(), True),
+            StructField("cast_id", IntegerType(), True),
+            StructField("character", StringType(), True),
+            StructField("credit_id", StringType(), True),
+            StructField("order", IntegerType(), True)
+        ])
+    ), True),
+    StructField("crew", ArrayType(
+        StructType([
+            StructField("adult", BooleanType(), True),
+            StructField("gender", IntegerType(), True),
+            StructField("id", IntegerType(), True),
+            StructField("known_for_department", StringType(), True),
+            StructField("name", StringType(), True),
+            StructField("original_name", StringType(), True),
+            StructField("popularity", DoubleType(), True),
+            StructField("profile_path", StringType(), True),
+            StructField("credit_id", StringType(), True),
+            StructField("department", StringType(), True),
+            StructField("job", StringType(), True)
+        ])
+    ), True)
+])
+schema_keyword = StructType([
+    StructField("id", IntegerType(), True),
+    StructField("keywords", ArrayType(
+        StructType([
+            StructField("id", IntegerType(), True),
+            StructField("name", StringType(), True)
+        ])
+    ), True)
+])
 # Đọc dữ liệu từ Kafka
+# kafka_df = spark.readStream \
+#     .format("kafka") \
+#     .option("kafka.bootstrap.servers", "kafka:9092") \
+#     .option("subscribe", "tmdb_movies") \
+#     .option("startingOffsets", "latest") \
+#     .load()
 kafka_df = spark.readStream \
     .format("kafka") \
     .option("kafka.bootstrap.servers", "kafka:9092") \
-    .option("subscribe", "tmdb_movies") \
+    .option("subscribe", "tmdb_movies,tmdb_crews,tmdb_keywords") \
     .option("startingOffsets", "latest") \
     .load()
-
 # Chuyển đổi dữ liệu từ binary sang string và parse JSON
-json_df = kafka_df.selectExpr("CAST(value AS STRING)")
-parsed_df = json_df.withColumn("data", from_json(col("value"), schema)).select("data.*")
+# json_df = kafka_df.selectExpr("CAST(value AS STRING)")
+# parsed_df = json_df.withColumn("data", from_json(col("value"), schema)).select("data.*")
+json_df = kafka_df.selectExpr("CAST(value AS STRING) as value", "topic")
 
-# Ép release_date sang DateType
-# parsed_df = parsed_df.withColumn("release_date", to_date(col("release_date"), "yyyy-MM-dd"))
-parsed_df = parsed_df.withColumn("release_date", to_date(col("release_date"), "yyyy-MM-dd")) \
-                    .withColumn("read_time", date_format("read_timestamp", "yyyy-MM-dd HH:mm:ss"))
-                    #  .withColumn("read_time", current_timestamp())
-#--------------------------------------
-# Broze DATA
-#---------------------------------------
-# bronze_df = parsed_df.select(
-#     col("id").cast("integer"),
-#     col("budget").cast("integer"),
-#     col("popularity").cast("double").alias("popularity"),
-#     col("revenue").cast("double").alias("revenue"),
-#     col("vote_average").cast("double").alias("vote_average"),
-#     col("vote_count").cast("double").alias("vote_count"),
-#     unix_timestamp(col("release_date"), "yyyy-MM-dd").alias("date_id"),
-#     col("title"),                                                # Giữ nguyên kiểu string
-#     col("original_title"),                                       # Giữ nguyên kiểu string
-#     col("original_language").alias("language"),                  # Đổi tên trường: original_language -> language
-#     col("overview"),                                             # Giữ nguyên kiểu string
-#     col("runtime").cast("double").alias("runtime"),              # Ép về double
-#     col("tagline"),                                              # Giữ nguyên kiểu string
-#     col("status"),                                               # Giữ nguyên kiểu string
-#     col("homepage"),
-#     col("genres"),
-#     col("release_date")
-# )
-bronze_df = parsed_df.writeStream \
+# Tách dữ liệu thành 3 DataFrame riêng biệt
+movies_df = json_df.filter(col("topic") == "tmdb_movies") \
+                   .withColumn("data", from_json(col("value"), schema_movie)) \
+                   .select("data.*") \
+                   .withColumn("release_date", to_date(col("release_date"), "yyyy-MM-dd")) \
+                   .withColumn("read_time", current_timestamp())
+
+crews_df = json_df.filter(col("topic") == "tmdb_crews") \
+                  .withColumn("data", from_json(col("value"), schema_crew)) \
+                  .select("data.*") \
+                  .withColumn("read_time", current_timestamp())
+
+keywords_df = json_df.filter(col("topic") == "tmdb_keywords") \
+                     .withColumn("data", from_json(col("value"), schema_keyword)) \
+                     .select("data.*") \
+                     .withColumn("read_time", current_timestamp())
+
+movies_bronze = movies_df.writeStream \
     .format("delta") \
     .outputMode("append") \
-    .option("checkpointLocation", "s3a://lakehouse/check/Bronze_API_1") \
-    .option("path", "s3a://lakehouse/bronze/Bronze_API_1") \
+    .option("checkpointLocation", "s3a://lakehouse/check/Bronze_Movies") \
+    .option("path", "s3a://lakehouse/bronze/Bronze_Movies_API") \
     .start()
 
+crews_bronze = crews_df.writeStream \
+    .format("delta") \
+    .outputMode("append") \
+    .option("checkpointLocation", "s3a://lakehouse/check/Bronze_Crews") \
+    .option("path", "s3a://lakehouse/bronze/Bronze_Crews_API") \
+    .start()
+
+keywords_bronze = keywords_df.writeStream \
+    .format("delta") \
+    .outputMode("append") \
+    .option("checkpointLocation", "s3a://lakehouse/check/Bronze_Keywords") \
+    .option("path", "s3a://lakehouse/bronze/Bronze_Keywords_API") \
+    .start()
 
 spark.streams.awaitAnyTermination()

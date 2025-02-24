@@ -28,8 +28,12 @@ spark = SparkSession.builder \
     .config('spark.sql.warehouse.dir', "s3a://lakehouse/") \
     .getOrCreate()
 
-df = spark.read.format("delta").load("s3a://lakehouse/bronze/Bronze_API_1")
-df = df.select(
+df_Movies = spark.read.format("delta").load("s3a://lakehouse/bronze/Bronze_Movies_API")
+df_Crews = spark.read.format("delta").load("s3a://lakehouse/bronze/Bronze_Crews_API")
+df_Keywords = spark.read.format("delta").load("s3a://lakehouse/bronze/Bronze_Keywords_API")
+
+
+df_Movies = df_Movies.select(
     col("id").cast("integer"),
     col("budget").cast("integer"),
     col("popularity").cast("double").alias("popularity"),
@@ -55,7 +59,7 @@ try:
     readTime = spark.read.format("delta").load("s3a://lakehouse/ReadTime")
 except:
     spark.sql("""
-CREATE TABLE IF NOT EXISTS delta.`s3a://your-bucket/processing_state` (
+CREATE TABLE IF NOT EXISTS delta.`s3a://lakehouse/ReadTime"` (
     task_id STRING,
     last_read_time TIMESTAMP
 ) USING DELTA
@@ -86,17 +90,42 @@ last_read_time = result[0][0]
 # df = df.filter(
 #                                 (col("read_time") >= last_read_time_ts)
 #                             )
-df = df.filter(f"read_time > '{last_read_time}'")
+
 # last_read_time = Variable.get("last_read_time", default_var="1970-01-01T00:00:00")
 
 # # Chuyển đổi thành kiểu timestamp nếu cần
 # filtered_df = df.filter(col("read_time") > lit(last_read_time).cast("timestamp"))
 
+
+
+df_Movies = df_Movies.filter(f"read_time > '{last_read_time}'")
+df_Crews = df_Crews.filter(f"read_time > '{last_read_time}'")
+df_Keywords = df_Keywords.filter(f"read_time > '{last_read_time}'")
+
 try:
-    tb = DeltaTable.forPath(spark, "s3a://lakehouse/silver/Silver_API_1")
-    tb.alias("target").merge(
-        df.alias("source"),
+    tb_movie = DeltaTable.forPath(spark, "s3a://lakehouse/silver/Silver_Movies_API")
+    tb_movie.alias("target").merge(
+        df_Movies.alias("source"),
         "target.id = source.id"
     ).whenNotMatchedInsertAll().execute()
 except:
-    df.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/silver/Silver_API_1")
+    df_Movies.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/silver/Silver_Movies_API")
+
+try:
+    tb_crew = DeltaTable.forPath(spark, "s3a://lakehouse/silver/Silver_Crews_API")
+    tb_crew.alias("target").merge(
+        df_Crews.alias("source"),
+        "target.id = source.id"
+    ).whenNotMatchedInsertAll().execute()
+except:
+    df_Crews.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/silver/Silver_Crews_API")
+
+
+try:
+    tb_keyword = DeltaTable.forPath(spark, "s3a://lakehouse/silver/Silver_Keywords_API")
+    tb_keyword.alias("target").merge(
+        df_Keywords.alias("source"),
+        "target.id = source.id"
+    ).whenNotMatchedInsertAll().execute()
+except:
+    df_Keywords.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/silver/Silver_Keywords_API")

@@ -27,7 +27,9 @@ spark = SparkSession.builder \
     .config('spark.sql.warehouse.dir', "s3a://lakehouse/") \
     .getOrCreate()
 
-df = spark.read.format("delta").load("s3a://lakehouse/silver/Silver_API_1")
+df_Movies = spark.read.format("delta").load("s3a://lakehouse/silver/Silver_Movies_API")
+df_Crews = spark.read.format("delta").load("s3a://lakehouse/silver/Silver_Crews_API")
+df_Keywords = spark.read.format("delta").load("s3a://lakehouse/silver/Silver_Keywords_API")
 # last_read_time = Variable.get("last_read_time_SG", default_var="1970-01-01T00:00:00")
 # last_read_time_ts = to_timestamp(lit(last_read_time), "yyyy-MM-dd HH:mm:ss")
 try:
@@ -48,11 +50,11 @@ CREATE TABLE IF NOT EXISTS delta.`s3a://your-bucket/processing_state` (
 result = readTime.filter(f"task_id = 'BatchApi_Process'").select("last_read_time").collect()
 last_read_time = result[0][0]
 
-df = df.filter(f"read_time > '{last_read_time}'")
+df_Movies = df_Movies.filter(f"read_time > '{last_read_time}'")
 # --------------------------------------------------
 # FACT TABLE: fact_movie
 # --------------------------------------------------
-fact_movie_df = df.select(
+fact_movie_df = df_Movies.select(
     col("id"),
     col("budget"),
     col("popularity"),
@@ -81,7 +83,7 @@ except :
 # Lưu ý: Đổi tên các cột để khớp với schema của Delta table hiện có:
 # Schema mong đợi: id, title, original_title, language, overview, runtime, tagline, status, homepage
 # --------------------------------------------------
-dimmovie_df = df.select(
+dimmovie_df = df_Movies.select(
     col("id"),                        # Ép sang long
     col("title"),                                                # Giữ nguyên kiểu string
     col("original_title"),                                       # Giữ nguyên kiểu string
@@ -106,7 +108,7 @@ except:
 # --------------------------------------------------
 # DIMENSION TABLE: dim_date
 # --------------------------------------------------
-dimdate_df = df.withColumn("release_date", to_date(col("release_date"), "yyyy-MM-dd")) \
+dimdate_df = df_Movies.withColumn("release_date", to_date(col("release_date"), "yyyy-MM-dd")) \
     .select(
         date_format(col("release_date"), "yyyy-MM-dd").alias("release_date"),
         dayofweek(col("release_date")).alias("DayOfWeek"),
@@ -135,7 +137,7 @@ except:
 # --------------------------------------------------
 # DIMENSION TABLE: dim_genre
 # --------------------------------------------------
-dim_genre_df = df.select(
+dim_genre_df = df_Movies.select(
     explode(col("genres")).alias("genre")
 ).select(
     col("genre.id").cast("integer").alias("id"),
@@ -155,14 +157,13 @@ except:
 # --------------------------------------------------
 # BRIDGE TABLE: movie_genres
 # --------------------------------------------------
-movie_genre_df = df.select(
+movie_genre_df = df_Movies.select(
     col("id").alias("movie_id"),
     explode(col("genres")).alias("genre")
 ).select(
     col("genre.id").cast("integer").alias("genres_id"),
     col("movie_id").alias("id")
 )
-
 try:
     movie_genre = DeltaTable.forPath(spark, "s3a://lakehouse/gold/movie_genre")
     movie_genre.alias("target").merge(
@@ -170,18 +171,151 @@ try:
         "target.id = source.id AND target.genres_id = source.genres_id"
     ).whenNotMatchedInsertAll().execute()
 except:
-    movie_genre_df.write.format("delta").mode("overwrite").save("s3a://lakehouse/gold/movie_genres")
+    movie_genre_df.write.format("delta").mode("overwrite").save("s3a://lakehouse/gold/movie_genre")
     
+
+# --------------------------------------------------
+# DIMENSION TABLE: dim_keyword
+# --------------------------------------------------
+dim_keyword_df = df_Keywords.select(
+    explode(col("keywords"))).select(
+        col("keywords.id").alias("id"),
+        col("keywords.name").alias("name")
+).dropDuplicates(["id"])
+
+try:
+    dim_keyword = DeltaTable.forPath(spark, "s3a://lakehouse/gold/dim_keyword")
+    dim_keyword.alias("target").merge(
+        dim_keyword_df.alias("source"),
+        "target.id = source.id"
+    ).whenNotMatchedInsertAll().execute()
+except:
+    dim_keyword_df.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/dim_keyword")
+
+# --------------------------------------------------
+# BRIDGE TABLE: movie_keyword
+# --------------------------------------------------
+movie_keyword_df = df_Keywords.select(
+    col("id").alias("movie_id"),
+    explode(col("keywords")).alias("keyword")
+).select(
+    col("keyword.id").alias("keyword_id"),
+    col("movie_id").alias("id")
+)
+try:
+    movie_keyword = DeltaTable.forPath(spark, "s3a://lakehouse/gold/movie_keyword")
+    movie_keyword.alias("target").merge(
+        movie_keyword_df.alias("source"),
+        "target.id = source.id AND target.keyword_id = source.keyword_id"
+    ).whenNotMatchedInsertAll().execute()
+except:
+    movie_keyword_df.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/movie_keyword")
+
+
+# --------------------------------------------------
+# DIMENSION TABLE: dim_cast
+# --------------------------------------------------
+dim_cast_df = df_Crews.select(
+    col("id"),
+    explode(col("cast"))
+    ).select(
+        col("id").alias("movie_id"),
+        col("cast.id").alias("cast_id"),
+        col("cast.name").alias("name"),
+        col("cast.profile_path").alias("profile_path"),
+        col("cast.gender").alias("gender")
+)
+
+try:
+    dim_cast = DeltaTable.forPath(spark, "s3a://lakehouse/gold/dim_cast")
+    dim_cast.alias("target").merge(
+        dim_cast_df.alias("source"),
+        "target.id = source.id"
+    ).whenNotMatchedInsertAll().execute()
+except:
+    dim_cast_df.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/dim_cast")
+    
+# --------------------------------------------------
+# BRIDGE TABLE: movie_cast
+# --------------------------------------------------
+movie_cast_df = df_Crews.select(
+    col("id").alias("movie_id"),
+    explode(col("cast"))
+).select(
+    col("cast.id").alias("cast_id"),
+    col("cast.character").alias("character"),
+    col("movie_id").alias("id")
+)
+try:
+    movie_cast = DeltaTable.forPath(spark, "s3a://lakehouse/gold/movie_cast")
+    movie_cast.alias("target").merge(
+        movie_cast_df.alias("source"),
+        "target.movie_id = source.movie_id AND target.cast_id = source.cast_id AND target.character = target.character"
+    ).whenNotMatchedInsertAll().execute()
+except:
+    movie_cast_df.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/movie_cast")
+
+
+
+# --------------------------------------------------
+# DIMENSION TABLE: dim_crew
+# --------------------------------------------------
+dim_crew_df = df_Crews.select(
+    col("id"),
+    explode(col("crew"))
+    ).select(
+        col("id").alias("movie_id"),
+        col("crew.id").alias("crew_id"),
+        col("cast.name").alias("name"),
+        col("cast.profile_path").alias("profile_path"),
+        col("cast.gender").alias("gender"),
+        col("cast.job").alias("job"),
+        col("cast.department").alias("department")
+
+)
+try:
+    dim_crew = DeltaTable.forPath(spark, "s3a://lakehouse/gold/dim_crew")
+    dim_crew.alias("target").merge(
+        dim_crew_df.alias("source"),
+        "target.id = source.id"
+    ).whenNotMatchedInsertAll().execute()
+except:
+    dim_crew_df.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/dim_crew")
+    
+# --------------------------------------------------
+# BRIDGE TABLE: movie_crew
+# --------------------------------------------------
+movie_crew_df = df_Crews.select(
+    col("id").alias("movie_id"),
+    explode(col("crew"))
+).select(
+    col("crew.id").alias("crew_id"),
+    col("crew.job").alias("job"),
+    col("movie_id").alias("id"),
+    col("crew.department").alias("department")
+)
+try:
+    movie_crew = DeltaTable.forPath(spark, "s3a://lakehouse/gold/movie_crew")
+    movie_crew.alias("target").merge(
+        movie_crew_df.alias("source"),
+        "target.movie_id = source.movie_id AND target.crew_id = source.crew_id AND target.job = target.job AND target.department = target.department"
+    ).whenNotMatchedInsertAll().execute()
+except:
+    movie_crew_df.write.format("delta").mode("overwrite").option("overwriteSchema", "true").save("s3a://lakehouse/gold/movie_crew")
+
+
+
+
+
+
+
+
 max_read_time_row = df.agg(max("read_time")).collect()
 max_read_time = max_read_time_row[0]["max(read_time)"] if max_read_time_row else None
 
 
 readTime = spark.read.format("delta").load("s3a://lakehouse/ReadTime")
-    
-    # Cập nhật hoặc chèn bản ghi mới
 updated_df = readTime.filter(f"task_id != 'BatchApi_Process'").union(
     spark.createDataFrame([("BatchApi_Process", max_read_time)], ["task_id", "last_read_time"])
 )
-
-# Ghi đè Delta Table
 updated_df.write.format("delta").mode("overwrite").save("s3a://lakehouse/ReadTime")
