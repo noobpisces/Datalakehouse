@@ -36,21 +36,33 @@ try:
     readTime = spark.read.format("delta").load("s3a://lakehouse/ReadTime")
 except:
     spark.sql("""
-CREATE TABLE IF NOT EXISTS delta.`s3a://your-bucket/processing_state` (
+CREATE TABLE IF NOT EXISTS delta.`s3a://lakehouse/ReadTime` (
     task_id STRING,
     last_read_time TIMESTAMP
 ) USING DELTA
 """)
     spark.sql("""
     INSERT INTO delta.`s3a://lakehouse/ReadTime`
-    VALUES ('BatchApi_Process', '1970-01-01 00:00:00')
-    """)
+    VALUES 
+      ('BatchApi_Process_Movies', '1970-01-01 00:00:00'),
+      ('BatchApi_Process_Crews', '1970-01-01 00:00:00'),
+      ('BatchApi_Process_Keywords', '1970-01-01 00:00:00')
+""")
     readTime = spark.read.format("delta").load("s3a://lakehouse/ReadTime")
 
-result = readTime.filter(f"task_id = 'BatchApi_Process'").select("last_read_time").collect()
-last_read_time = result[0][0]
+result_movie = readTime.filter(f"task_id = 'BatchApi_Process_Movies'").select("last_read_time").collect()
+result_crew = readTime.filter(f"task_id = 'BatchApi_Process_Crews'").select("last_read_time").collect()
+result_keyword = readTime.filter(f"task_id = 'BatchApi_Process_Keywords'").select("last_read_time").collect()
 
-df_Movies = df_Movies.filter(f"read_time > '{last_read_time}'")
+last_read_time_movie = result_movie[0][0]
+last_read_time_crew = result_crew[0][0]
+last_read_time_keyword = result_keyword[0][0]
+
+
+df_Movies = df_Movies.filter(f"read_time > '{last_read_time_movie}'")
+df_Crews = df_Crews.filter(f"read_time > '{last_read_time_crew}'")
+df_Keywords = df_Keywords.filter(f"read_time > '{last_read_time_keyword}'")
+
 # --------------------------------------------------
 # FACT TABLE: fact_movie
 # --------------------------------------------------
@@ -177,10 +189,13 @@ except:
 # --------------------------------------------------
 # DIMENSION TABLE: dim_keyword
 # --------------------------------------------------
+
+
 dim_keyword_df = df_Keywords.select(
-    explode(col("keywords"))).select(
-        col("keywords.id").alias("id"),
-        col("keywords.name").alias("name")
+    explode(col("keywords")).alias("keyword")
+).select(
+    col("keyword.id").alias("id"),
+    col("keyword.name").alias("name")
 ).dropDuplicates(["id"])
 
 try:
@@ -200,7 +215,8 @@ movie_keyword_df = df_Keywords.select(
     explode(col("keywords")).alias("keyword")
 ).select(
     col("keyword.id").alias("keyword_id"),
-    col("movie_id").alias("id")
+    col("movie_id").alias("id"),
+    col("keyword.name").alias("name")
 )
 try:
     movie_keyword = DeltaTable.forPath(spark, "s3a://lakehouse/gold/movie_keyword")
@@ -216,10 +232,8 @@ except:
 # DIMENSION TABLE: dim_cast
 # --------------------------------------------------
 dim_cast_df = df_Crews.select(
-    col("id"),
-    explode(col("cast"))
+    explode(col("cast")).alias("cast")
     ).select(
-        col("id").alias("movie_id"),
         col("cast.id").alias("cast_id"),
         col("cast.name").alias("name"),
         col("cast.profile_path").alias("profile_path"),
@@ -240,11 +254,11 @@ except:
 # --------------------------------------------------
 movie_cast_df = df_Crews.select(
     col("id").alias("movie_id"),
-    explode(col("cast"))
+    explode(col("cast")).alias("cast")
 ).select(
     col("cast.id").alias("cast_id"),
     col("cast.character").alias("character"),
-    col("movie_id").alias("id")
+    col("movie_id")
 )
 try:
     movie_cast = DeltaTable.forPath(spark, "s3a://lakehouse/gold/movie_cast")
@@ -261,16 +275,14 @@ except:
 # DIMENSION TABLE: dim_crew
 # --------------------------------------------------
 dim_crew_df = df_Crews.select(
-    col("id"),
-    explode(col("crew"))
+    explode(col("crew")).alias("crew")
     ).select(
-        col("id").alias("movie_id"),
-        col("crew.id").alias("crew_id"),
-        col("cast.name").alias("name"),
-        col("cast.profile_path").alias("profile_path"),
-        col("cast.gender").alias("gender"),
-        col("cast.job").alias("job"),
-        col("cast.department").alias("department")
+        col("crew.id"),
+        col("crew.name"),
+        col("crew.profile_path"),
+        col("crew.gender"),
+        col("crew.job"),
+        col("crew.department")
 
 )
 try:
@@ -287,11 +299,11 @@ except:
 # --------------------------------------------------
 movie_crew_df = df_Crews.select(
     col("id").alias("movie_id"),
-    explode(col("crew"))
+    explode(col("crew")).alias("crew")
 ).select(
     col("crew.id").alias("crew_id"),
     col("crew.job").alias("job"),
-    col("movie_id").alias("id"),
+    col("movie_id"),
     col("crew.department").alias("department")
 )
 try:
@@ -310,12 +322,38 @@ except:
 
 
 
-max_read_time_row = df.agg(max("read_time")).collect()
-max_read_time = max_read_time_row[0]["max(read_time)"] if max_read_time_row else None
+max_read_time_row_movies = df_Movies.agg(max("read_time")).collect()
+max_read_time_row_crews = df_Crews.agg(max("read_time")).collect()
+max_read_time_row_keywords = df_Keywords.agg(max("read_time")).collect()
+
+# # max_read_time = max_read_time_row[0]["max(read_time)"] if max_read_time_row else None
+# max_read_time = max(max_read_time_row_movies, max_read_time_row_crews, max_read_time_row_keywords)
+
+# readTime = spark.read.format("delta").load("s3a://lakehouse/ReadTime")
+# updated_df = readTime.filter(f"task_id != 'BatchApi_Process'").union(
+#     spark.createDataFrame([("BatchApi_Process", max_read_time)], ["task_id", "last_read_time"])
+# )
+# updated_df.write.format("delta").mode("overwrite").save("s3a://lakehouse/ReadTime")
 
 
+# Tạo DataFrame mới chứa 3 dòng với các task_id khác nhau
+new_rows = [
+    ("BatchApi_Process_Movies",   max_read_time_row_movies),
+    ("BatchApi_Process_Crews",    max_read_time_row_crews),
+    ("BatchApi_Process_Keywords", max_read_time_row_keywords)
+]
+new_df = spark.createDataFrame(new_rows, ["task_id", "last_read_time"])
+
+# Đọc bảng ReadTime hiện tại
 readTime = spark.read.format("delta").load("s3a://lakehouse/ReadTime")
-updated_df = readTime.filter(f"task_id != 'BatchApi_Process'").union(
-    spark.createDataFrame([("BatchApi_Process", max_read_time)], ["task_id", "last_read_time"])
+
+# Loại bỏ các dòng đã có task_id tương ứng để cập nhật
+filtered_readTime = readTime.filter(
+    "task_id NOT IN ('BatchApi_Process_Movies', 'BatchApi_Process_Crews', 'BatchApi_Process_Keywords')"
 )
+
+# Union DataFrame hiện tại với các dòng mới
+updated_df = filtered_readTime.union(new_df)
+
+# Ghi lại dữ liệu vào bảng Delta
 updated_df.write.format("delta").mode("overwrite").save("s3a://lakehouse/ReadTime")

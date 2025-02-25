@@ -59,19 +59,34 @@ try:
     readTime = spark.read.format("delta").load("s3a://lakehouse/ReadTime")
 except:
     spark.sql("""
-CREATE TABLE IF NOT EXISTS delta.`s3a://lakehouse/ReadTime"` (
+CREATE TABLE IF NOT EXISTS delta.`s3a://lakehouse/ReadTime` (
     task_id STRING,
     last_read_time TIMESTAMP
 ) USING DELTA
 """)
     spark.sql("""
     INSERT INTO delta.`s3a://lakehouse/ReadTime`
-    VALUES ('BatchApi_Process', '1970-01-01 00:00:00')
-    """)
+    VALUES 
+      ('BatchApi_Process_Movies', '1970-01-01 00:00:00'),
+      ('BatchApi_Process_Crews', '1970-01-01 00:00:00'),
+      ('BatchApi_Process_Keywords', '1970-01-01 00:00:00')
+""")
     readTime = spark.read.format("delta").load("s3a://lakehouse/ReadTime")
 
-result = readTime.filter(f"task_id = 'BatchApi_Process'").select("last_read_time").collect()
-last_read_time = result[0][0]
+# result = readTime.filter(f"task_id = 'BatchApi_Process'").select("last_read_time").collect()
+# last_read_time = result[0][0]
+result_movie = readTime.filter(f"task_id = 'BatchApi_Process_Movies'").select("last_read_time").collect()
+result_crew = readTime.filter(f"task_id = 'BatchApi_Process_Crews'").select("last_read_time").collect()
+result_keyword = readTime.filter(f"task_id = 'BatchApi_Process_Keywords'").select("last_read_time").collect()
+
+last_read_time_movie = result_movie[0][0]
+last_read_time_crew = result_crew[0][0]
+last_read_time_keyword = result_keyword[0][0]
+
+
+df_Movies = df_Movies.filter(f"read_time > '{last_read_time_movie}'")
+df_Crews = df_Crews.filter(f"read_time > '{last_read_time_crew}'")
+df_Keywords = df_Keywords.filter(f"read_time > '{last_read_time_keyword}'")
 
 # last_read_time = Variable.get("last_read_time", default_var="1970-01-01T00:00:00")
 # last_read_time_ts = to_timestamp(lit(last_read_time), "yyyy-MM-dd HH:mm:ss")
@@ -98,9 +113,9 @@ last_read_time = result[0][0]
 
 
 
-df_Movies = df_Movies.filter(f"read_time > '{last_read_time}'")
-df_Crews = df_Crews.filter(f"read_time > '{last_read_time}'")
-df_Keywords = df_Keywords.filter(f"read_time > '{last_read_time}'")
+# df_Movies = df_Movies.filter(f"read_time > '{last_read_time}'")
+# df_Crews = df_Crews.filter(f"read_time > '{last_read_time}'")
+# df_Keywords = df_Keywords.filter(f"read_time > '{last_read_time}'")
 
 try:
     tb_movie = DeltaTable.forPath(spark, "s3a://lakehouse/silver/Silver_Movies_API")
